@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debris Threats Assessment Map</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- ArcGIS JS CSS -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://js.arcgis.com/4.27/esri/themes/light/main.css" />
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div id="header">
+      <div class="header-title">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>Debris Threats Assessment Map</span>
+      </div>
+      <div id="currentDate" class="text-white"></div>
+    </div>
+    <div class="row full-height overflow-hidden align-items-stretch">
+      <!-- Controls Column -->
+      <div id="sidebar" class="col-4 p-0 d-flex flex-column ps-3 border-end" style=" position: relative; height: calc(100vh - 60px); overflow: auto;">
+      <div style="padding: 0 10px;">
+        <div>
+        <div class="row">
+          <div id="controls" class="control-section">
+            <div id="buttonGroup">
+              <button id="clearBtn" class="btn-action btn-clear" title="Clear Selection">
+                <i class="fas fa-times"></i> Clear
+              </button>
+              <button id="polygonBtn" class="btn-action btn-polygon" title="Select by Polygon">
+                <i class="fas fa-vector-square"></i> Polygon
+              </button>
+            </div>
+           
+            <div id="featureCount">Selected Features: 0</div>
+            
+
+            <div id="impactFields" class="mb-3 " style="border-bottom: 1px solid #eee;">
+               <!-- Impact Fields -->
+              <div class="control-section">
+                <div class="section-title">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <span>Impact Fields</span>
+                </div>
+                <div class="impact-checkbox">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Public Safety" id="impact1">
+                        <label class="form-check-label" for="impact1">Public Safety</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Contamination" id="impact2">
+                        <label class="form-check-label" for="impact2">Contamination</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Infrastructure Damage Prevention" id="impact3">
+                        <label class="form-check-label" for="impact3">Infrastructure Damage Prevention</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Flood Risk Mitigation" id="impact4">
+                        <label class="form-check-label" for="impact4">Flood Risk Mitigation</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Critical Habitat" id="impact5">
+                        <label class="form-check-label" for="impact5">Critical Habitat/Protected Lands</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Not a Threat" id="impact6">
+                        <label class="form-check-label" for="impact6">Not a Threat</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button id="updateBtn"><i class="fas fa-sync-alt"></i> Update Selection</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- Download Button -->
+        <div class="control-section text-center">
+          <button type="button" onclick="generatePDF()" class="download-btn">
+            <i class="fas fa-file-pdf"></i> Download as PDF
+          </button>
+        </div>
+
+        <!-- attribute table  -->
+        <div class="control-section" style="margin-top: 15px;">
+          <div class="section-title">
+            <i class="fas fa-table"></i>
+            <span>Feature Details</span>
+          </div>
+          <div id="tableContainer">
+          <table id="featureTable">
+            <tr>
+              <td class="label">County:</td>
+              <td class="value" id="countyCell">-</td>
+            </tr>
+            <tr>
+              <td class="label">Area:</td>
+              <td class="value" id="areaCell">-</td>
+            </tr>
+            <tr>
+              <td class="label">Threats:</td>
+              <td class="value" id="threatsCell">-</td>
+            </tr>
+            <tr>
+              <td class="label">Images:</td>
+              <td class="value">
+                <img id="debrisImage" src="" 
+                  alt="Click on a feature to view the debris image." 
+                  class="img-fluid mx-auto d-block avoid-break" />
+              </td>
+            </tr>
+          </table>
+        </div>
+        </div>
+      </div>
+      <div>
+        <button id="toggleSidebar" class="toggle-btn" style="    right: -30px !important;
+    left: auto; z-index: 2;">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </div>
+    </div>
+      </div>
+
+      <!-- toggle button colomn -->
+      <!-- <div class="col-auto d-flex align-items-center px-1" style="background: #f8f9fa;">
+        <button id="toggleSidebar" class="btn btn-sm btn-secondary" title="Toggle Panel">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </div> -->
+
+      <!-- Map Column -->
+      <div class="col-8 p-0 position-relative" id="mainMap" style="display: flex; align-items: center;">
+         <div>
+          <button id="toggleSidebarMap" class="toggle-btn">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div id="searchWidget"></div>
+        <div id="viewDiv"></div>
+       
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+  <!-- JS Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://js.arcgis.com/4.27/"></script>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
