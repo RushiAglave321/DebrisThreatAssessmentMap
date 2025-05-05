@@ -18,10 +18,31 @@
 
 <body>
   <div class="container-fluid">
+    <!-- <div id="header">
+      <div class="header-title">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>Debris Threats Assessment Map</span>
+      </div>
+      <div id="currentDate" class="text-white"></div>
+    </div> -->
     <div id="header">
       <div class="header-title">
         <i class="fas fa-map-marked-alt"></i>
         <span>Debris Threats Assessment Map</span>
+      </div>
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Threats:</span>
+          <span class="stat-value" id="totalCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Threats Assigned:</span>
+          <span class="stat-value" id="withDataCount">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Empty Threats:</span>
+          <span class="stat-value" id="emptyCount">0</span>
+        </div>
       </div>
       <div id="currentDate" class="text-white"></div>
     </div>

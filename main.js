@@ -43,11 +43,9 @@ require([
   view.when(() => {
     view.resize(); // Ensures ArcGIS adjusts the canvas to fit
     view.goTo({
-      target: someGeometryOrExtent // Optional: if you want to center
+      target: someGeometryOrExtent, // Optional: if you want to center
     });
   });
-  
-
 
   //Graphic layer for selection
   const graphicsLayer = new GraphicsLayer({
@@ -415,7 +413,7 @@ require([
           const countyTable = document.createElement("table");
           countyTable.className = "featureTable";
           countyTable.id = "featureTable"; // Match the original ID
-          
+
           // Create county row
           const countyRow = document.createElement("tr");
           countyRow.innerHTML = `
@@ -423,7 +421,7 @@ require([
             <td class="value" id="countyCell">${county}</td>
           `;
           countyTable.appendChild(countyRow);
-      
+
           for (const [area, features] of Object.entries(areas)) {
             // Create area row
             const areaRow = document.createElement("tr");
@@ -432,31 +430,33 @@ require([
               <td class="value" id="areaCell">${area}</td>
             `;
             countyTable.appendChild(areaRow);
-      
+
             // Create threats row
-            const threats = features.map(item => item.threat).join(", ");
+            const threats = features.map((item) => item.threat).join(", ");
             const threatsRow = document.createElement("tr");
             threatsRow.innerHTML = `
               <td class="label">Threats:</td>
               <td class="value" id="threatsCell">${threats}</td>
             `;
             countyTable.appendChild(threatsRow);
-      
+
             // Create images row
             const imagesRow = document.createElement("tr");
-            const imagesContent = features.map(item => 
-              item.image_url 
-                ? `<img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />`
-                : "No image"
-            ).join("<br>"); // Separate multiple images with line breaks
-            
+            const imagesContent = features
+              .map((item) =>
+                item.image_url
+                  ? `<img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />`
+                  : "No image"
+              )
+              .join("<br>"); // Separate multiple images with line breaks
+
             imagesRow.innerHTML = `
               <td class="label">Images:</td>
               <td class="value">${imagesContent}</td>
             `;
             countyTable.appendChild(imagesRow);
           }
-      
+
           container.appendChild(countyTable);
         }
       });
@@ -530,20 +530,20 @@ require([
 
 async function generatePDF() {
   const container = document.getElementById("tableContainer");
-  
+
   // Create a clone of the content to preserve original styling
   const element = container.cloneNode(true);
-  
+
   // Store original styles
   const originalStyles = {
     maxHeight: container.style.maxHeight,
-    overflow: container.style.overflow
+    overflow: container.style.overflow,
   };
-  
+
   // Temporarily modify styles for printing
   container.style.maxHeight = "none";
   container.style.overflow = "visible";
-  
+
   try {
     await generatePDFNow(container);
   } catch (error) {
@@ -559,7 +559,7 @@ async function generatePDF() {
 async function generatePDFNow(element) {
   // Create a print window
   const printWindow = window.open("", "_blank", "width=800,height=600");
-  
+
   if (!printWindow) {
     throw new Error("Popup was blocked. Please allow popups for this site.");
   }
@@ -625,8 +625,8 @@ async function generatePDFNow(element) {
   `);
 
   // Process images to ensure they load
-  const images = element.querySelectorAll('img');
-  const imagePromises = Array.from(images).map(img => {
+  const images = element.querySelectorAll("img");
+  const imagePromises = Array.from(images).map((img) => {
     return new Promise((resolve) => {
       if (img.complete && img.naturalHeight !== 0) {
         resolve();
@@ -641,20 +641,20 @@ async function generatePDFNow(element) {
   await Promise.all(imagePromises);
 
   // Append the content to the print window
-  const printContent = printWindow.document.getElementById('print-content');
+  const printContent = printWindow.document.getElementById("print-content");
   printContent.appendChild(element.cloneNode(true));
 
   printWindow.document.close();
 
   // Wait for the print window to fully load
-  await new Promise(resolve => {
+  await new Promise((resolve) => {
     printWindow.onload = resolve;
   });
 
   // Trigger print after a short delay
   setTimeout(() => {
     printWindow.print();
-    
+
     // Close the window after printing (with delay for Firefox)
     setTimeout(() => {
       printWindow.close();
@@ -699,8 +699,38 @@ function toggleSidebar() {
   }, 300);
 }
 
+const baseUrl = 'https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0/query';
+
+// Change this to the actual field you're analyzing
+const fieldName = 'Impact'; 
+
+
+async function getCount(whereClause) {
+  const url = `${baseUrl}/query?where=${encodeURIComponent(whereClause)}&returnCountOnly=true&f=json`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.count;
+}
+
+async function countByField(field) {
+  const total = await getCount('1=1');
+  const nullOrEmpty = await getCount(`${field} IS NULL OR ${field} = ''`);
+  const hasValue = await getCount(`${field} IS NOT NULL AND ${field} <> ''`);
+
+  console.log(`Total features: ${total}`);
+  console.log(`Empty or missing '${field}': ${nullOrEmpty}`);
+  console.log(`With value in '${field}': ${hasValue}`);
+
+  // Update the header with counts
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('withDataCount').textContent = hasValue;
+  document.getElementById('emptyCount').textContent = nullOrEmpty;
+}
+
+// Call the function
+countByField(fieldName);
+
+
 // Register both toggle buttons
 toggleBtn.addEventListener("click", toggleSidebar);
 toggleBtnMap.addEventListener("click", toggleSidebar);
-
-

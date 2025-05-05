@@ -1,349 +1,368 @@
 :root {
-    --primary-color: #006d77;
-    --secondary-color: #83c5be;
-    --accent-color: #ffddd2;
-    --dark-color: #1d3557;
-    --light-color: #f1faee;
-    --success-color: #2a9d8f;
-    --danger-color: #e63946;
-  }
+  --primary-color: #006d77;
+  --secondary-color: #83c5be;
+  --accent-color: #ffddd2;
+  --dark-color: #1d3557;
+  --light-color: #f1faee;
+  --success-color: #2a9d8f;
+  --danger-color: #e63946;
+}
 
 html,
-    body {
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Roboto", sans-serif;
+}
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+}
+
+#header {
+  background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+  color: white;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-stats {
+  display: flex;
+  gap: 20px;
+  margin-left: auto; /* Pushes everything else to the right */
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.2rem;
+}
+
+.stat-label {
+  color: #adb5bd;
+}
+
+.stat-value {
+  font-weight: bold;
+  color: white;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-title i {
+  font-size: 1.8rem;
+}
+.row.full-height {
+  flex: 1;
+  display: flex;
+  /* overflow: hidden; */
+  height: calc(100vh - 60px);
+  flex-direction: row;
+  /* Prevent internal scroll */
+}
+
+.col-8,
+.col-4 {
+  height: 100%;
+  /* overflow: hidden; */
+}
+
+#viewDiv {
+  height: 100%;
+  width: 100%;
+}
+.col-8 {
+  flex-grow: 1;
+  height: 100%; /* Ensures the map fills the column */
+}
+
+#controls {
+  flex: 1;
+  overflow-y: auto;
+  /* If you ever want scroll inside just this */
+  padding: 1rem;
+  background-color: whitesmoke;
+}
+
+#buttonGroup {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-action {
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-clear {
+  background-color: var(--danger-color);
+  color: white;
+  border: none;
+}
+
+.btn-clear:hover {
+  background-color: #c1121f;
+}
+
+.btn-polygon {
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+}
+
+.btn-polygon:hover {
+  background-color: #21867a;
+}
+
+#searchWidget {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+#featureCount {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--dark-color);
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+}
+
+#updateBtn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin: 15px 0 0 0;
+}
+
+#updateBtn:hover {
+  background-color: var(--dark-color);
+  transform: translateY(-1px);
+}
+
+#updateBtn i {
+  margin-right: 8px;
+}
+.download-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.download-btn:hover {
+  background-color: #21867a;
+  transform: translateY(-1px);
+}
+#featureTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 15px;
+}
+
+#featureTable td,
+#featureTable th {
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+}
+
+#featureTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#featureTable tr:hover {
+  background-color: #f0f0f0;
+}
+
+#featureTable td.label {
+  font-weight: 500;
+  color: var(--dark-color);
+  width: 25%;
+}
+
+#debrisImage {
+  max-height: 200px;
+  max-width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: none;
+  margin-top: 10px;
+}
+
+.toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+  background-color: white;
+  border: none;
+  border-radius: 0 50% 50% 0;
+  width: 30px;
+  height: 50px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background-color: var(--light-color);
+  width: 32px;
+}
+
+#searchWidget {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    width: 300px;
+    position: absolute;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: 'Roboto', sans-serif;
-    }
-
-    .container-fluid {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      padding: 0;
-    }
-
-    #header {
-        background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
-        color: white;
-        padding: 1rem;
-        font-size: 1.5rem;
-        font-weight: 600;
-        font-family: 'Poppins', sans-serif;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .header-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-    
-      .header-title i {
-        font-size: 1.8rem;
-      }
-    .row.full-height {
-      flex: 1;
-      display: flex;
-      /* overflow: hidden; */
-      height:  calc(100vh - 60px);
-      flex-direction: row;
-      /* Prevent internal scroll */
-    }
-
-    .col-8,
-    .col-4 {
-      height: 100%;
-      /* overflow: hidden; */
-    }
-
-    #viewDiv {
-      height: 100%;
-      width: 100%;
-    }
-    .col-8 {
-        flex-grow: 1;
-        height: 100%; /* Ensures the map fills the column */
-      }
-      
-    #controls {
-      flex: 1;
-      overflow-y: auto;
-      /* If you ever want scroll inside just this */
-      padding: 1rem;
-      background-color: whitesmoke;
-    }
-
-   
-  #buttonGroup {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
   }
 
-  .btn-action {
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s ease;
+  .sidebar-collapsed {
+    transform: translateX(-270px);
   }
 
-  .btn-clear {
-    background-color: var(--danger-color);
-    color: white;
-    border: none;
+  .control-section {
+    padding: 12px;
   }
+}
+img {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
 
-  .btn-clear:hover {
-    background-color: #c1121f;
-  }
+.avoid-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
 
-  .btn-polygon {
-    background-color: var(--success-color);
-    color: white;
-    border: none;
-  }
+.esri-widget--button {
+  background-color: #085d6e !important;
+}
 
-  .btn-polygon:hover {
-    background-color: #21867a;
-  }
+.esri-icon-layer-list {
+  color: white !important;
+}
 
-    #searchWidget {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 10;
-    }
+.esri-icon-search {
+  color: white !important;
+}
 
-    #featureCount {
-        font-size: 1rem;
-        font-weight: 500;
-        color: var(--dark-color);
-        padding: 8px 0;
-        border-bottom: 1px solid #eee;
-        margin-bottom: 15px;
-      }
+.esri-icon-plus:before {
+  color: white !important;
+}
+.esri-icon-minus:before {
+  color: white !important;
+}
+.esri-icon-legend:before {
+  color: white !important;
+}
+#sidebar,
+#mapCol {
+  transition: all 0.3s ease;
+}
 
-      #updateBtn {
-        width: 100%;
-        padding: 10px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        margin: 15px 0 0 0;
-      }
-    
-      #updateBtn:hover {
-        background-color: var(--dark-color);
-        transform: translateY(-1px);
-      }
-    
-      #updateBtn i {
-        margin-right: 8px;
-      }
-      .download-btn {
-        width: 100%;
-        padding: 10px;
-        background-color: var(--success-color);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-    
-      .download-btn:hover {
-        background-color: #21867a;
-        transform: translateY(-1px);
-      }
-    #featureTable {
-    width: 100%;
-    border-collapse: collapse;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-top: 15px;
-  }
+.feature-details-wrapper {
+  padding: 10px;
+}
 
-  #featureTable td, #featureTable th {
-    padding: 12px 15px;
-    border: 1px solid #e0e0e0;
-  }
+.section-header {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--dark-color);
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--secondary-color);
+}
 
-  #featureTable tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
+.area-header {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
 
-  #featureTable tr:hover {
-    background-color: #f0f0f0;
-  }
+.features-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
 
-  #featureTable td.label {
-    font-weight: 500;
-    color: var(--dark-color);
-    width: 25%;
-  }
+.features-table td {
+  padding: 10px 15px;
+  border: 1px solid #e0e0e0;
+}
 
-  #debrisImage {
-    max-height: 200px;
-    max-width: 100%;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    display: none;
-    margin-top: 10px;
-  }
+.features-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
 
-  .toggle-btn {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    z-index: 10;
-    background-color: white;
-    border: none;
-    border-radius: 0 50% 50% 0;
-    width: 30px;
-    height: 50px;
-    box-shadow: 2px 0 6px rgba(0,0,0,0.1);
-    color: var(--primary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+.features-table .label {
+  font-weight: 500;
+  color: var(--dark-color);
+  width: 25%;
+}
 
-  .toggle-btn:hover {
-    background-color: var(--light-color);
-    width: 32px;
-  }
-
-  #searchWidget {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
-  }
-
-
-  @media (max-width: 768px) {
-    #sidebar {
-      width: 300px;
-      position: absolute;
-      height: 100%;
-    }
-    
-    .sidebar-collapsed {
-      transform: translateX(-270px);
-    }
-    
-    .control-section {
-      padding: 12px;
-    }
-  }
-    img {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .avoid-break {
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
-
-    .esri-widget--button {
-      background-color: #085d6e  !important;
-
-    }
-
-    .esri-icon-layer-list {
-      color: white !important;
-    }
-
-    .esri-icon-search {
-      color: white !important;
-    }
-
-    .esri-icon-plus:before {
-      color:white !important;
-    }
-    .esri-icon-minus:before {
-      color:white !important;
-    }
-    .esri-icon-legend:before{
-        color:white !important;
-    }
-    #sidebar, #mapCol {
-        transition: all 0.3s ease;
-      }
-
-      .feature-details-wrapper {
-        padding: 10px;
-      }
-      
-      .section-header {
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: var(--dark-color);
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 8px;
-        border-bottom: 2px solid var(--secondary-color);
-      }
-      
-      .area-header {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: var(--primary-color);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-      
-      .features-table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-top: 10px;
-      }
-      
-      .features-table td {
-        padding: 10px 15px;
-        border: 1px solid #e0e0e0;
-      }
-      
-      .features-table tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-      
-      .features-table .label {
-        font-weight: 500;
-        color: var(--dark-color);
-        width: 25%;
-      }
-      
-      .feature-image {
-        max-height: 200px;
-        max-width: 100%;
-        border-radius: 4px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        margin-top: 5px;
-      }
-      
-      
-      
+.feature-image {
+  max-height: 200px;
+  max-width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+}
