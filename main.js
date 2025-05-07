@@ -185,14 +185,73 @@ require([
     visible: false,
   });
 
+  //clint setup web map 8 layers
+  let THREATS_Public_Safety_Threats_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Public_Safety_Threats_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Public Safety Threats Basic",
+    visible: false,
+  });
+  let THREATS_PS_StormSurge = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS PS StormSurge",
+    visible: false,
+  });
+  let THREATS_Flood_Mitigation_Threats_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Flood_Mitigation_Threats_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Flood Mitigation Threats Basic",
+    visible: false,
+  });
+  let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS FM dfirm fldhaz 100 500Yr",
+    visible: false,
+  });
+  let THREATS_Infrastructure_Damage_Threat_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Infrastructure_Damage_Threat_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Infrastructure Damage Threat Basic",
+    visible: false,
+  });
+  let THREATS_Navigable_Waterway_Threat_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Navigable_Waterway_Threat_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Navigable Waterway Threat Basic",
+    visible: false,
+  });
+  let THREATS_Critical_Habitat_Threat_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Critical_Habitat_Threat_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Critical Habitat Threat Basic",
+    visible: false,
+  });
+  let THREATS_Protected_Lands_Threat_Basic = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Protected_Lands_Threat_Basic/FeatureServer/0",
+    outFields: ["*"],
+    title: "THREATS Protected Lands Threat Basic",
+    visible: false,
+  });
+
   // Add grouped layers to map
   // map.addMany([ticketData, featureLayer]);
   map.addMany([
+    THREATS_Public_Safety_Threats_Basic,
+    THREATS_PS_StormSurge,
+    THREATS_Flood_Mitigation_Threats_Basic,
+    THREATS_FM_dfirm_fldhaz_100_500Yr,
+    THREATS_Infrastructure_Damage_Threat_Basic,
+    THREATS_Navigable_Waterway_Threat_Basic,
+    THREATS_Critical_Habitat_Threat_Basic,
+    THREATS_Protected_Lands_Threat_Basic,
     infrastructureGroup,
     publicServicesGroup,
     emergencyGroup,
     ticketData,
     featureLayer,
+    
   ]);
 
   // ------------------selection--------------------------------
@@ -210,7 +269,7 @@ require([
         const results = response.results.filter(function (result) {
           return result.graphic.layer === featureLayer;
         });
-        console.log("response", response);
+        // console.log("response", response);
 
         if (results.length > 0) {
           const graphic = results[0].graphic;
@@ -232,18 +291,17 @@ require([
           const impactElement = document.getElementById("impactInput");
 
           if (impactField) {
-            console.log(impactField);
             imageElement.value = impactField;
           } else {
             console.log("Impact filed is not set.");
           }
           //show impact field
 
-          console.log("graphic attributes", graphic.attributes);
+          // console.log("graphic attributes", graphic.attributes);
 
           // Highlight selected feature
           highlight = layerView.highlight(graphic);
-          console.log("highlight", highlight);
+          // console.log("highlight", highlight);
 
           // Optional: Zoom to the selected feature
           if (graphic.geometry.extent) {
@@ -463,9 +521,8 @@ require([
     }
 
     sketch.on("create", async (event) => {
-      console.log("in the sketch");
       if (event.state === "complete") {
-        console.log("Polygon geometry:", event.graphic.geometry); // Add this
+        // console.log("Polygon geometry:", event.graphic.geometry); // Add this
 
         const query = featureLayer.createQuery();
         query.geometry = event.graphic.geometry;
@@ -474,7 +531,6 @@ require([
         query.outFields = ["*"];
 
         const result = await featureLayer.queryFeatures(query);
-        console.log("Query result:", result); // Add this
 
         selectedFeatures = result.features;
         highlightSelection();
@@ -716,10 +772,6 @@ async function countByField(field) {
   const total = await getCount('1=1');
   const nullOrEmpty = await getCount(`${field} IS NULL OR ${field} = ''`);
   const hasValue = await getCount(`${field} IS NOT NULL AND ${field} <> ''`);
-
-  console.log(`Total features: ${total}`);
-  console.log(`Empty or missing '${field}': ${nullOrEmpty}`);
-  console.log(`With value in '${field}': ${hasValue}`);
 
   // Update the header with counts
   document.getElementById('totalCount').textContent = total;
