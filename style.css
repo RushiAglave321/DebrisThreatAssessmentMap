@@ -307,6 +307,12 @@ img {
 .esri-icon-legend:before {
   color: white !important;
 }
+.esri-ui-corner {
+  box-shadow: none !important;
+}
+.esri-component{
+  box-shadow: none !important;
+}
 #sidebar,
 #mapCol {
   transition: all 0.3s ease;
