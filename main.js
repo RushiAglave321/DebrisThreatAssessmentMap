@@ -14,6 +14,7 @@ require([
   "esri/widgets/Legend",
   "esri/widgets/Zoom",
   "esri/rest/locator",
+  "esri/widgets/BasemapGallery",
 ], (
   Map,
   MapView,
@@ -29,7 +30,8 @@ require([
   GroupLayer,
   Legend,
   Zoom,
-  locator
+  locator,
+  BasemapGallery,
 ) => {
   const map = new Map({ basemap: "streets" });
 
@@ -38,6 +40,22 @@ require([
     map: map,
     zoom: 6,
     center: [-80.19179, 25.76168], // Miami
+  });
+
+  //basemapgallery
+  const basemapGallery = new BasemapGallery({
+    view: view,
+  });
+
+  const expand = new Expand({
+    view: view,
+    content: basemapGallery,
+    expandTooltip: "Basemap Gallery",
+  });
+
+  // Add the expand widget to the top-right corner of the view
+  view.ui.add(expand, {
+    position: "bottom-left",
   });
 
   view.when(() => {
@@ -246,12 +264,8 @@ require([
     THREATS_Navigable_Waterway_Threat_Basic,
     THREATS_Critical_Habitat_Threat_Basic,
     THREATS_Protected_Lands_Threat_Basic,
-    infrastructureGroup,
-    publicServicesGroup,
-    emergencyGroup,
     ticketData,
     featureLayer,
-    
   ]);
 
   // ------------------selection--------------------------------
@@ -755,33 +769,34 @@ function toggleSidebar() {
   }, 300);
 }
 
-const baseUrl = 'https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0/query';
+const baseUrl =
+  "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0/query";
 
 // Change this to the actual field you're analyzing
-const fieldName = 'Impact'; 
-
+const fieldName = "Impact";
 
 async function getCount(whereClause) {
-  const url = `${baseUrl}/query?where=${encodeURIComponent(whereClause)}&returnCountOnly=true&f=json`;
+  const url = `${baseUrl}/query?where=${encodeURIComponent(
+    whereClause
+  )}&returnCountOnly=true&f=json`;
   const response = await fetch(url);
   const data = await response.json();
   return data.count;
 }
 
 async function countByField(field) {
-  const total = await getCount('1=1');
+  const total = await getCount("1=1");
   const nullOrEmpty = await getCount(`${field} IS NULL OR ${field} = ''`);
   const hasValue = await getCount(`${field} IS NOT NULL AND ${field} <> ''`);
 
   // Update the header with counts
-  document.getElementById('totalCount').textContent = total;
-  document.getElementById('withDataCount').textContent = hasValue;
-  document.getElementById('emptyCount').textContent = nullOrEmpty;
+  document.getElementById("totalCount").textContent = total;
+  document.getElementById("withDataCount").textContent = hasValue;
+  document.getElementById("emptyCount").textContent = nullOrEmpty;
 }
 
 // Call the function
 countByField(fieldName);
-
 
 // Register both toggle buttons
 toggleBtn.addEventListener("click", toggleSidebar);
