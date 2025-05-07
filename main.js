@@ -261,14 +261,14 @@ require([
   // Add grouped layers to map
   // map.addMany([ticketData, featureLayer]);
   map.addMany([
-    THREATS_Public_Safety_Threats_Basic,
-    THREATS_PS_StormSurge,
-    THREATS_Flood_Mitigation_Threats_Basic,
-    THREATS_FM_dfirm_fldhaz_100_500Yr,
-    THREATS_Infrastructure_Damage_Threat_Basic,
-    THREATS_Navigable_Waterway_Threat_Basic,
-    THREATS_Critical_Habitat_Threat_Basic,
     THREATS_Protected_Lands_Threat_Basic,
+    THREATS_Critical_Habitat_Threat_Basic,
+    THREATS_Navigable_Waterway_Threat_Basic,
+    THREATS_Infrastructure_Damage_Threat_Basic,
+    THREATS_FM_dfirm_fldhaz_100_500Yr,
+    THREATS_Flood_Mitigation_Threats_Basic,
+    THREATS_PS_StormSurge,
+    THREATS_Public_Safety_Threats_Basic,
     ticketData,
     featureLayer,
   ]);
