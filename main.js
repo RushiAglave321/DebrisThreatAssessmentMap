@@ -40,6 +40,10 @@ require([
     map: map,
     zoom: 6,
     center: [-80.19179, 25.76168], // Miami
+    popup: {
+      dockEnabled: false, // or true
+      autoOpenEnabled: false // Prevent default popup, use manual .open()
+    }
   });
 
   //basemapgallery
@@ -58,12 +62,12 @@ require([
     position: "bottom-left",
   });
 
-  view.when(() => {
-    view.resize(); // Ensures ArcGIS adjusts the canvas to fit
-    view.goTo({
-      target: someGeometryOrExtent, // Optional: if you want to center
-    });
-  });
+  // view.when(() => {
+  //   // view.resize(); // Ensures ArcGIS adjusts the canvas to fit
+  //   view.goTo({
+  //     target: someGeometryOrExtent, // Optional: if you want to center
+  //   });
+  // });
 
   //Graphic layer for selection
   const graphicsLayer = new GraphicsLayer({
@@ -192,6 +196,7 @@ require([
     outFields: ["*"],
     title: "Debris - AshBritt",
     renderer: renderer,
+   
   });
 
   // map.add(featureLayer);
@@ -267,6 +272,46 @@ require([
     ticketData,
     featureLayer,
   ]);
+
+  //popup
+  view.on("click", function (event) {
+    view.hitTest(event).then(function (response) {
+      const results = response.results;
+  
+      // Filter only graphics from FeatureLayers
+      const graphics = results.filter(result => result.graphic.layer && result.graphic.layer.type === "feature");
+  
+      if (graphics.length > 0) {
+        // Create a popup content string for all features under the click
+        let popupContent = "";
+  
+        graphics.forEach((result, index) => {
+          const attrs = result.graphic.attributes;
+          popupContent += `<b>Layer ${index + 1} - ${result.graphic.layer.title}</b><br>`;
+          for (const key in attrs) {
+            popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
+          }
+          popupContent += "<hr>";
+        });
+  
+        // Show popup
+        view.popup.open({
+          title: `Found ${graphics.length} feature(s)`,
+          content: popupContent,
+          location: event.mapPoint
+        });
+      } else {
+        // Optional fallback if no features were clicked
+        view.popup.open({
+          title: "No features here",
+          content: `Coordinates:<br>Lat: ${event.mapPoint.latitude.toFixed(4)}, Lon: ${event.mapPoint.longitude.toFixed(4)}`,
+          location: event.mapPoint
+        });
+      }
+    });
+  });
+  
+  
 
   // ------------------selection--------------------------------
   let highlight; // to store the current highlight
