@@ -279,12 +279,13 @@ require([
       },
       symbol: {
         type: "text",  // autocasts as new TextSymbol()
-        color: "green",
-        haloColor: "white",
-        haloSize: "1px",
+        color: "white",
+        haloColor: "black",
+        haloSize: "2px",
         font: {
           size: 12,
-          family: "sans-serif"
+          family: "sans-serif",
+           weight: "bold"
         }
       },
       labelPlacement: "center-right",
