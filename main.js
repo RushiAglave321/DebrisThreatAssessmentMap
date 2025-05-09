@@ -257,10 +257,46 @@ require([
     title: "THREATS Protected Lands Threat Basic",
     visible: false,
   });
+  let County_Layer = new FeatureLayer({
+    url: "https://ocean.floridamarine.org/arcgis/rest/services/FWC_GIS/MRGIS_Boundaries/FeatureServer/36",
+    outFields: ["*"],
+    title: "County Work Boundary",
+    visible: true,
+    renderer: {
+      type: "simple", // SimpleRenderer
+      symbol: {
+        type: "simple-fill", // For polygons
+        color: "rgba(0,0,0,0)", // 50% opacity
+        outline: {
+          color: "blue",
+          width: 1
+        }
+      }
+    },
+    labelingInfo: [{
+      labelExpressionInfo: {
+        expression: "$feature.County"  // Change "NAME" to your desired field
+      },
+      symbol: {
+        type: "text",  // autocasts as new TextSymbol()
+        color: "green",
+        haloColor: "white",
+        haloSize: "1px",
+        font: {
+          size: 12,
+          family: "sans-serif"
+        }
+      },
+      labelPlacement: "center-right",
+      minScale: 800000 
+    }],
 
-  // Add grouped layers to map
-  // map.addMany([ticketData, featureLayer]);
+    labelsVisible: true // Important!
+  });
+
+ 
   map.addMany([
+    County_Layer,
     THREATS_Protected_Lands_Threat_Basic,
     THREATS_Critical_Habitat_Threat_Basic,
     THREATS_Navigable_Waterway_Threat_Basic,
@@ -273,7 +309,7 @@ require([
     featureLayer,
   ]);
 
-  //popup
+  //popup configured
   view.on("click", function (event) {
     view.hitTest(event).then(function (response) {
       const results = response.results;
