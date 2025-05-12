@@ -31,7 +31,7 @@ require([
   Legend,
   Zoom,
   locator,
-  BasemapGallery,
+  BasemapGallery
 ) => {
   const map = new Map({ basemap: "streets" });
 
@@ -42,8 +42,8 @@ require([
     center: [-80.19179, 25.76168], // Miami
     popup: {
       dockEnabled: false, // or true
-      autoOpenEnabled: false // Prevent default popup, use manual .open()
-    }
+      autoOpenEnabled: false, // Prevent default popup, use manual .open()
+    },
   });
 
   //basemapgallery
@@ -76,74 +76,74 @@ require([
   map.add(graphicsLayer);
 
   //trying to group layers
-  let infrastructureGroup = new GroupLayer({
-    title: "Infrastructure Damage Prevention",
-    visible: false,
-    layers: [
-      new FeatureLayer({
-        title: "Bridges",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Bridges/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-    ],
-  });
+  // // let infrastructureGroup = new GroupLayer({
+  // //   title: "Infrastructure Damage Prevention",
+  // //   visible: false,
+  // //   layers: [
+  // //     new FeatureLayer({
+  // //       title: "Bridges",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Bridges/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //   ],
+  // // });
 
-  let publicServicesGroup = new GroupLayer({
-    title: "Public Safety",
-    visible: false,
-    layers: [
-      new FeatureLayer({
-        title: "Schools",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Schools/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-      new FeatureLayer({
-        title: "Hospital",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Hospitals/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-      new FeatureLayer({
-        title: "Firestations",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Firestations/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-      new FeatureLayer({
-        title: "Evacuation Routes",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Evacuation_Routes/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-      new FeatureLayer({
-        title: "Brownfields",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Brownfields/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-    ],
-  });
+  // // let publicServicesGroup = new GroupLayer({
+  // //   title: "Public Safety",
+  // //   visible: false,
+  // //   layers: [
+  // //     new FeatureLayer({
+  // //       title: "Schools",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Schools/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //     new FeatureLayer({
+  // //       title: "Hospital",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Hospitals/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //     new FeatureLayer({
+  // //       title: "Firestations",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Firestations/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //     new FeatureLayer({
+  // //       title: "Evacuation Routes",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Evacuation_Routes/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //     new FeatureLayer({
+  // //       title: "Brownfields",
+  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Brownfields/FeatureServer/0",
+  // //       outFields: ["*"],
+  // //       // visible: false
+  // //     }),
+  // //   ],
+  // // });
 
-  let emergencyGroup = new GroupLayer({
-    title: "Flood Mitigation",
-    visible: false,
-    layers: [
-      new FeatureLayer({
-        title: "Box Culverts",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Box_Culverts/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-      new FeatureLayer({
-        title: "FDOT Surface Water Drainage Network",
-        url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FDOT_Surface_Water_Drainage_Network/FeatureServer/0",
-        outFields: ["*"],
-        // visible: false
-      }),
-    ],
-  });
+  // // let emergencyGroup = new GroupLayer({
+  //   title: "Flood Mitigation",
+  //   visible: false,
+  //   layers: [
+  //     new FeatureLayer({
+  //       title: "Box Culverts",
+  //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Box_Culverts/FeatureServer/0",
+  //       outFields: ["*"],
+  //       // visible: false
+  //     }),
+  //     new FeatureLayer({
+  //       title: "FDOT Surface Water Drainage Network",
+  //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FDOT_Surface_Water_Drainage_Network/FeatureServer/0",
+  //       outFields: ["*"],
+  //       // visible: false
+  //     }),
+  //   ],
+  // // });
 
   //render arcade expression for filtering null and not null value for symbology
   const renderer = {
@@ -196,7 +196,6 @@ require([
     outFields: ["*"],
     title: "Debris - AshBritt",
     renderer: renderer,
-   
   });
 
   // map.add(featureLayer);
@@ -269,33 +268,34 @@ require([
         color: "rgba(0,0,0,0)", // 50% opacity
         outline: {
           color: "blue",
-          width: 1
-        }
-      }
+          width: 1,
+        },
+      },
     },
-    labelingInfo: [{
-      labelExpressionInfo: {
-        expression: "$feature.County"  // Change "NAME" to your desired field
+    labelingInfo: [
+      {
+        labelExpressionInfo: {
+          expression: "$feature.County", // Change "NAME" to your desired field
+        },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "white",
+          haloColor: "black",
+          haloSize: "2px",
+          font: {
+            size: 12,
+            family: "sans-serif",
+            weight: "bold",
+          },
+        },
+        labelPlacement: "center-right",
+        minScale: 800000,
       },
-      symbol: {
-        type: "text",  // autocasts as new TextSymbol()
-        color: "white",
-        haloColor: "black",
-        haloSize: "2px",
-        font: {
-          size: 12,
-          family: "sans-serif",
-           weight: "bold"
-        }
-      },
-      labelPlacement: "center-right",
-      minScale: 800000 
-    }],
+    ],
 
-    labelsVisible: true // Important!
+    labelsVisible: true, // Important!
   });
 
- 
   map.addMany([
     County_Layer,
     THREATS_Protected_Lands_Threat_Basic,
@@ -314,41 +314,46 @@ require([
   view.on("click", function (event) {
     view.hitTest(event).then(function (response) {
       const results = response.results;
-  
+
       // Filter only graphics from FeatureLayers
-      const graphics = results.filter(result => result.graphic.layer && result.graphic.layer.type === "feature");
-  
+      const graphics = results.filter(
+        (result) =>
+          result.graphic.layer && result.graphic.layer.type === "feature"
+      );
+
       if (graphics.length > 0) {
         // Create a popup content string for all features under the click
         let popupContent = "";
-  
+
         graphics.forEach((result, index) => {
           const attrs = result.graphic.attributes;
-          popupContent += `<b>Layer ${index + 1} - ${result.graphic.layer.title}</b><br>`;
+          popupContent += `<b>Layer ${index + 1} - ${
+            result.graphic.layer.title
+          }</b><br>`;
           for (const key in attrs) {
             popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
           }
           popupContent += "<hr>";
         });
-  
+
         // Show popup
         view.popup.open({
           title: `Found ${graphics.length} feature(s)`,
           content: popupContent,
-          location: event.mapPoint
+          location: event.mapPoint,
         });
       } else {
         // Optional fallback if no features were clicked
         view.popup.open({
           title: "No features here",
-          content: `Coordinates:<br>Lat: ${event.mapPoint.latitude.toFixed(4)}, Lon: ${event.mapPoint.longitude.toFixed(4)}`,
-          location: event.mapPoint
+          content: `Coordinates:<br>Lat: ${event.mapPoint.latitude.toFixed(
+            4
+          )}, Lon: ${event.mapPoint.longitude.toFixed(4)}`,
+          location: event.mapPoint,
         });
       }
     });
   });
-  
-  
 
   // ------------------selection--------------------------------
   let highlight; // to store the current highlight
@@ -387,7 +392,7 @@ require([
           const impactElement = document.getElementById("impactInput");
 
           if (impactField) {
-            imageElement.value = impactField;
+            impactElement.value = impactField;
           } else {
             console.log("Impact filed is not set.");
           }
@@ -453,7 +458,7 @@ require([
 
     view.ui.add(layerListExpand, "top-right");
 
-    //legends
+    //---------------Adding legends--------------------------
     const legend = new Legend({
       view: view,
     });
@@ -635,12 +640,11 @@ require([
         document
           .getElementById("updateBtn")
           .addEventListener("click", async () => {
-            console.log("update button");
+
             const checkboxes = document.querySelectorAll(
               "#impactFields input[type='checkbox']:checked"
             );
             const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
-            console.log("selectedValues", selectedValues);
 
             for (let feature of selectedFeatures) {
               feature.attributes.Impact = selectedValues.join(", ");
@@ -650,7 +654,28 @@ require([
               updateFeatures: selectedFeatures,
             });
             if (edits.updateFeatureResults.length > 0) {
-              alert("Updated successfully!");
+              alert("Impact Updated successfully!");
+            } else {
+              alert("No updates were made.");
+            }
+          });
+
+        //----------------Updating notes in the attributes-----------------
+        document
+          .getElementById("notesBtn")
+          .addEventListener("click", async () => {
+            console.log("notes section");
+            const notes = document.getElementById("notesText").value;
+
+            for (let feature of selectedFeatures) {
+              feature.attributes.notes = notes;
+            }
+
+            const edits = await featureLayer.applyEdits({
+              updateFeatures: selectedFeatures,
+            });
+            if (edits.updateFeatureResults.length > 0) {
+              alert("Notes Updated successfully!");
             } else {
               alert("No updates were made.");
             }
@@ -883,3 +908,22 @@ countByField(fieldName);
 // Register both toggle buttons
 toggleBtn.addEventListener("click", toggleSidebar);
 toggleBtnMap.addEventListener("click", toggleSidebar);
+
+//toggle buttong for notes and impact field
+document.getElementById("togglePanelBtn").addEventListener("click", () => {
+  const notesPanel = document.getElementById("notesPanel");
+  const impactFields = document.getElementById("impactFields");
+  const toggleBtn = document.getElementById("togglePanelBtn");
+  const icon = toggleBtn.querySelector("i");
+
+  notesPanel.classList.toggle("hidden");
+  impactFields.classList.toggle("hidden");
+
+  if (notesPanel.classList.contains("hidden")) {
+    toggleBtn.textContent = "Add Notes";
+    toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Show Notes';
+  } else {
+    toggleBtn.textContent = "Add Impact Fields";
+    toggleBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Show Impact Fields';
+  }
+});

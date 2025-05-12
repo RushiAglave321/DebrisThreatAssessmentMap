@@ -41,114 +41,128 @@
     </div>
     <div class="row full-height overflow-hidden align-items-stretch">
       <!-- Controls Column -->
-      <div id="sidebar" class="col-4 p-0 d-flex flex-column ps-3 border-end" style=" position: relative; height: calc(100vh - 60px); overflow: auto;">
-      <div style="padding: 0 10px;">
-        <div>
-        <div class="row">
-          <div id="controls" class="control-section">
-            <div id="buttonGroup">
-              <button id="clearBtn" class="btn-action btn-clear" title="Clear Selection">
-                <i class="fas fa-times"></i> Clear
-              </button>
-              <button id="polygonBtn" class="btn-action btn-polygon" title="Select by Polygon">
-                <i class="fas fa-vector-square"></i> Polygon
-              </button>
-            </div>
-           
-            <div id="featureCount">Selected Features: 0</div>
-            
+      <div id="sidebar" class="col-4 p-0 d-flex flex-column ps-3 border-end"
+        style=" position: relative; height: calc(100vh - 60px); overflow: auto;">
+        <div style="padding: 0 10px;">
+          <div>
+            <div class="row">
+              <div id="controls" class="control-section">
+                <div id="buttonGroup">
 
-            <div id="impactFields" class="mb-3 " style="border-bottom: 1px solid #eee;">
-               <!-- Impact Fields -->
-              <div class="control-section">
-                <div class="section-title">
-                  <i class="fas fa-exclamation-triangle"></i>
-                  <span>Impact Fields</span>
+                  <button id="togglePanelBtn" class="btn-action btn-toggle"><i class="fas fa-edit"></i> Show Notes</button>
+
+                  <button id="clearBtn" class="btn-action btn-clear" title="Clear Selection">
+                    <i class="fas fa-times"></i> Clear
+                  </button>
+                  <button id="polygonBtn" class="btn-action btn-polygon" title="Select by Polygon">
+                    <i class="fas fa-vector-square"></i> Polygon
+                  </button>
                 </div>
-                <div class="impact-checkbox">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Public Safety" id="impact1">
-                        <label class="form-check-label" for="impact1">Public Safety</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Contamination" id="impact2">
-                        <label class="form-check-label" for="impact2">Contamination</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Infrastructure Damage Prevention" id="impact3">
-                        <label class="form-check-label" for="impact3">Infrastructure Damage Prevention</label>
+
+                <div id="featureCount">Selected Features: 0</div>
+
+                <!-- adding notes widget -->
+                <div id="notesPanel" class="hidden">
+                  <h5>Notes</h5>
+                  <textarea id="notesText" placeholder="Type your notes here..."></textarea>
+                  <br>
+                  <button id="notesBtn" class="btn-action btn-success" title="Notes">
+                    <i class="fas fa-edit"></i>Update Notes
+                  </button>
+                </div>
+
+
+                <div id="impactFields" class="mb-3 " style="border-bottom: 1px solid #eee;">
+                  <!-- Impact Fields -->
+                  <div class="control-section">
+                    <div class="section-title">
+                      <i class="fas fa-exclamation-triangle"></i>
+                      <span>Impact Fields</span>
+                    </div>
+                    <div class="impact-checkbox">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Public Safety" id="impact1">
+                            <label class="form-check-label" for="impact1">Public Safety</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Contamination" id="impact2">
+                            <label class="form-check-label" for="impact2">Contamination</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Infrastructure Damage Prevention"
+                              id="impact3">
+                            <label class="form-check-label" for="impact3">Infrastructure Damage Prevention</label>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Flood Risk Mitigation" id="impact4">
+                            <label class="form-check-label" for="impact4">Flood Risk Mitigation</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Critical Habitat" id="impact5">
+                            <label class="form-check-label" for="impact5">Critical Habitat/Protected Lands</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="Not a Threat" id="impact6">
+                            <label class="form-check-label" for="impact6">Not a Threat</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Flood Risk Mitigation" id="impact4">
-                        <label class="form-check-label" for="impact4">Flood Risk Mitigation</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Critical Habitat" id="impact5">
-                        <label class="form-check-label" for="impact5">Critical Habitat/Protected Lands</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="Not a Threat" id="impact6">
-                        <label class="form-check-label" for="impact6">Not a Threat</label>
-                      </div>
-                    </div>
+                    <button id="updateBtn"><i class="fas fa-sync-alt"></i> Update Selection</button>
                   </div>
                 </div>
-                <button id="updateBtn"><i class="fas fa-sync-alt"></i> Update Selection</button>
+
               </div>
             </div>
+            <!-- Download Button -->
+            <div class="control-section text-center">
+              <button type="button" onclick="generatePDF()" class="download-btn">
+                <i class="fas fa-file-pdf"></i> Download as PDF
+              </button>
+            </div>
 
+            <!-- attribute table  -->
+            <div class="control-section" style="margin-top: 15px;">
+              <div class="section-title">
+                <i class="fas fa-table"></i>
+                <span>Feature Details</span>
+              </div>
+              <div id="tableContainer">
+                <table id="featureTable">
+                  <tr>
+                    <td class="label">County:</td>
+                    <td class="value" id="countyCell">-</td>
+                  </tr>
+                  <tr>
+                    <td class="label">Area:</td>
+                    <td class="value" id="areaCell">-</td>
+                  </tr>
+                  <tr>
+                    <td class="label">Threats:</td>
+                    <td class="value" id="threatsCell">-</td>
+                  </tr>
+                  <tr>
+                    <td class="label">Images:</td>
+                    <td class="value">
+                      <img id="debrisImage" src="" alt="Click on a feature to view the debris image."
+                        class="img-fluid mx-auto d-block avoid-break" />
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-        <!-- Download Button -->
-        <div class="control-section text-center">
-          <button type="button" onclick="generatePDF()" class="download-btn">
-            <i class="fas fa-file-pdf"></i> Download as PDF
-          </button>
-        </div>
-
-        <!-- attribute table  -->
-        <div class="control-section" style="margin-top: 15px;">
-          <div class="section-title">
-            <i class="fas fa-table"></i>
-            <span>Feature Details</span>
-          </div>
-          <div id="tableContainer">
-          <table id="featureTable">
-            <tr>
-              <td class="label">County:</td>
-              <td class="value" id="countyCell">-</td>
-            </tr>
-            <tr>
-              <td class="label">Area:</td>
-              <td class="value" id="areaCell">-</td>
-            </tr>
-            <tr>
-              <td class="label">Threats:</td>
-              <td class="value" id="threatsCell">-</td>
-            </tr>
-            <tr>
-              <td class="label">Images:</td>
-              <td class="value">
-                <img id="debrisImage" src="" 
-                  alt="Click on a feature to view the debris image." 
-                  class="img-fluid mx-auto d-block avoid-break" />
-              </td>
-            </tr>
-          </table>
-        </div>
-        </div>
-      </div>
-      <div>
-        <button id="toggleSidebar" class="toggle-btn" style="    right: -30px !important;
+          <div>
+            <button id="toggleSidebar" class="toggle-btn" style="    right: -30px !important;
     left: auto; z-index: 2;">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-      </div>
-    </div>
+              <i class="fas fa-chevron-left"></i>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- toggle button colomn -->
@@ -160,18 +174,18 @@
 
       <!-- Map Column -->
       <div class="col-8 p-0 position-relative" id="mainMap" style="display: flex; align-items: center;">
-         <div>
+        <div>
           <button id="toggleSidebarMap" class="toggle-btn">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
         <div id="searchWidget"></div>
         <div id="viewDiv"></div>
-       
+
       </div>
     </div>
 
-    </div>
+  </div>
   </div>
 
   <!-- JS Libraries -->
