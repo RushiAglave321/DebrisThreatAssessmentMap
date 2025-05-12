@@ -910,20 +910,20 @@ toggleBtn.addEventListener("click", toggleSidebar);
 toggleBtnMap.addEventListener("click", toggleSidebar);
 
 //toggle buttong for notes and impact field
-document.getElementById("togglePanelBtn").addEventListener("click", () => {
-  const notesPanel = document.getElementById("notesPanel");
-  const impactFields = document.getElementById("impactFields");
-  const toggleBtn = document.getElementById("togglePanelBtn");
-  const icon = toggleBtn.querySelector("i");
+// document.getElementById("togglePanelBtn").addEventListener("click", () => {
+//   const notesPanel = document.getElementById("notesPanel");
+//   const impactFields = document.getElementById("impactFields");
+//   const toggleBtn = document.getElementById("togglePanelBtn");
+//   const icon = toggleBtn.querySelector("i");
 
-  notesPanel.classList.toggle("hidden");
-  impactFields.classList.toggle("hidden");
+//   notesPanel.classList.toggle("hidden");
+//   impactFields.classList.toggle("hidden");
 
-  if (notesPanel.classList.contains("hidden")) {
-    toggleBtn.textContent = "Add Notes";
-    toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Show Notes';
-  } else {
-    toggleBtn.textContent = "Add Impact Fields";
-    toggleBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Show Impact Fields';
-  }
-});
+//   if (notesPanel.classList.contains("hidden")) {
+//     toggleBtn.textContent = "Add Notes";
+//     toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Show Notes';
+//   } else {
+//     toggleBtn.textContent = "Add Impact Fields";
+//     toggleBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Show Impact Fields';
+//   }
+// });
