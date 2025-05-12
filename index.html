@@ -41,15 +41,15 @@
     </div>
     <div class="row full-height overflow-hidden align-items-stretch">
       <!-- Controls Column -->
-      <div id="sidebar" class="col-4 p-0 d-flex flex-column ps-3 border-end"
-        style=" position: relative; height: calc(100vh - 60px); overflow: auto;">
+      <div id="sidebar" class="col-4 p-0 d-flex flex-column ps-3 border-end" style=" position: relative; height: calc(100vh - 60px); overflow: auto; background: #f5f5f5;
+    overflow-x: hidden;">
         <div style="padding: 0 10px;">
           <div>
             <div class="row">
               <div id="controls" class="control-section">
                 <div id="buttonGroup">
 
-                  <button id="togglePanelBtn" class="btn-action btn-toggle"><i class="fas fa-edit"></i> Show Notes</button>
+                  <!-- <button id="togglePanelBtn" class="btn-action btn-toggle"><i class="fas fa-edit"></i> Show Notes</button> -->
 
                   <button id="clearBtn" class="btn-action btn-clear" title="Clear Selection">
                     <i class="fas fa-times"></i> Clear
@@ -61,18 +61,7 @@
 
                 <div id="featureCount">Selected Features: 0</div>
 
-                <!-- adding notes widget -->
-                <div id="notesPanel" class="hidden">
-                  <h5>Notes</h5>
-                  <textarea id="notesText" placeholder="Type your notes here..."></textarea>
-                  <br>
-                  <button id="notesBtn" class="btn-action btn-success" title="Notes">
-                    <i class="fas fa-edit"></i>Update Notes
-                  </button>
-                </div>
-
-
-                <div id="impactFields" class="mb-3 " style="border-bottom: 1px solid #eee;">
+                <div id="impactFields" class="mb-1 " style="border-bottom: 1px solid #eee;">
                   <!-- Impact Fields -->
                   <div class="control-section">
                     <div class="section-title">
@@ -118,6 +107,20 @@
 
               </div>
             </div>
+
+            <!-- adding notes widget -->
+            <div id="notesPanel" class="hidden">
+              <div class="notesTitle">
+              <i class="fas fa-edit"></i>
+              <h5>Notes</h5>
+            </div>
+              <textarea id="notesText" placeholder="Type your notes here..."></textarea>
+              <br>
+              <button id="notesBtn" class="btn-action btn-success" title="Notes">
+                <i class="fas fa-edit"></i>Update Notes
+              </button>
+            </div>
+
             <!-- Download Button -->
             <div class="control-section text-center">
               <button type="button" onclick="generatePDF()" class="download-btn">
