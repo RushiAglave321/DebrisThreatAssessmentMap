@@ -395,32 +395,17 @@ img {
   resize: vertical;
   border: 1px solid #199ca7;
   border-radius: 4px;
+  margin-top: 9px;
 }
 
-#notesBtn i {
-  margin-right: 6px;
-}
-
-#notesBtn {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  margin: 15px 15px 15px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* gap: 6px; */
-}
 #notesPanel{
   background-color: whitesmoke;
+  margin-top: 10px;
 }
 .notesTitle{
   display: ruby;
+  font-weight: bold;
+  font-size: 15px;
 }
 
 /* .hidden {
