@@ -429,8 +429,13 @@ require([
       const hasSelection = selectedFeatures.length > 0;
     }
 
+    // Refresh button to refresh table
+    document
+      .getElementById("refreshBtn")
+      .addEventListener("click", highlightSelection);
+
     function highlightSelection() {
-      graphicsLayer.removeAll();
+      // graphicsLayer.removeAll();
       selectedFeatures.forEach((feature) => {
         graphicsLayer.add(
           new Graphic({
@@ -518,7 +523,10 @@ require([
             countyTable.appendChild(areaRow);
 
             // Create threats row
-            const threats = features.map((item) => item.threat).join(", ");
+            // const threats = features.map((item) => item.threat).join(", ");
+            const threatSet = new Set(features.map((item) => item.threat));
+            const threats = [...threatSet].join(", ");
+
             const threatsRow = document.createElement("tr");
             threatsRow.innerHTML = `
               <td class="label">Threats:</td>
@@ -527,9 +535,12 @@ require([
             countyTable.appendChild(threatsRow);
 
             // Create Notes row
-            const notes = features.map((item) => item.notes)
+            // const notes = features.map((item) => item.notes)
+            const notesSet = new Set(features.map((item) => item.notes));
+            const notes = [...notesSet].join(", ");
+
             const notesRow = document.createElement("tr");
-            threatsRow.innerHTML = `
+            notesRow.innerHTML = `
               <td class="label">Notes:</td>
               <td class="value" id="notesCell">${notes}</td>
             `;
@@ -569,6 +580,8 @@ require([
         const result = await featureLayer.queryFeatures(query);
 
         selectedFeatures = result.features;
+        graphicsLayer.removeAll();
+
         highlightSelection();
         updateUI();
 
