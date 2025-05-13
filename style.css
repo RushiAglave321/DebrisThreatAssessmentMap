@@ -408,7 +408,11 @@ img {
   font-size: 15px;
 }
 
-/* .hidden {
-  display: none !important;
-} */
+#refreshBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
  
