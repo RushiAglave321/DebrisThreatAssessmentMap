@@ -3,14 +3,11 @@ require([
   "esri/views/MapView",
   "esri/layers/FeatureLayer",
   "esri/widgets/Search",
-  "esri/geometry/geometryEngine",
   "esri/layers/GraphicsLayer",
   "esri/widgets/Sketch",
   "esri/Graphic",
-  "esri/layers/MapImageLayer",
   "esri/widgets/LayerList",
   "esri/widgets/Expand",
-  "esri/layers/GroupLayer",
   "esri/widgets/Legend",
   "esri/widgets/Zoom",
   "esri/rest/locator",
@@ -20,14 +17,11 @@ require([
   MapView,
   FeatureLayer,
   Search,
-  geometryEngine,
   GraphicsLayer,
   Sketch,
   Graphic,
-  MapImageLayer,
   LayerList,
   Expand,
-  GroupLayer,
   Legend,
   Zoom,
   locator,
@@ -42,7 +36,7 @@ require([
     center: [-80.19179, 25.76168], // Miami
     popup: {
       dockEnabled: false, // or true
-      autoOpenEnabled: false, // Prevent default popup, use manual .open()
+      autoOpenEnabled: false,
     },
   });
 
@@ -62,88 +56,11 @@ require([
     position: "bottom-left",
   });
 
-  // view.when(() => {
-  //   // view.resize(); // Ensures ArcGIS adjusts the canvas to fit
-  //   view.goTo({
-  //     target: someGeometryOrExtent, // Optional: if you want to center
-  //   });
-  // });
-
   //Graphic layer for selection
   const graphicsLayer = new GraphicsLayer({
     title: "Selected Features",
   });
   map.add(graphicsLayer);
-
-  //trying to group layers
-  // // let infrastructureGroup = new GroupLayer({
-  // //   title: "Infrastructure Damage Prevention",
-  // //   visible: false,
-  // //   layers: [
-  // //     new FeatureLayer({
-  // //       title: "Bridges",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Bridges/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //   ],
-  // // });
-
-  // // let publicServicesGroup = new GroupLayer({
-  // //   title: "Public Safety",
-  // //   visible: false,
-  // //   layers: [
-  // //     new FeatureLayer({
-  // //       title: "Schools",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Schools/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //     new FeatureLayer({
-  // //       title: "Hospital",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Hospitals/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //     new FeatureLayer({
-  // //       title: "Firestations",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Firestations/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //     new FeatureLayer({
-  // //       title: "Evacuation Routes",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Evacuation_Routes/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //     new FeatureLayer({
-  // //       title: "Brownfields",
-  // //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Brownfields/FeatureServer/0",
-  // //       outFields: ["*"],
-  // //       // visible: false
-  // //     }),
-  // //   ],
-  // // });
-
-  // // let emergencyGroup = new GroupLayer({
-  //   title: "Flood Mitigation",
-  //   visible: false,
-  //   layers: [
-  //     new FeatureLayer({
-  //       title: "Box Culverts",
-  //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Box_Culverts/FeatureServer/0",
-  //       outFields: ["*"],
-  //       // visible: false
-  //     }),
-  //     new FeatureLayer({
-  //       title: "FDOT Surface Water Drainage Network",
-  //       url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FDOT_Surface_Water_Drainage_Network/FeatureServer/0",
-  //       outFields: ["*"],
-  //       // visible: false
-  //     }),
-  //   ],
-  // // });
 
   //render arcade expression for filtering null and not null value for symbology
   const renderer = {
@@ -389,7 +306,7 @@ require([
 
           //show impact field
           const impactField = graphic.attributes.Impact;
-          const impactElement = document.getElementById("impactInput");
+          const impactElement = document.getElementById("threatsCell");
 
           if (impactField) {
             impactElement.value = impactField;
@@ -398,7 +315,16 @@ require([
           }
           //show impact field
 
-          // console.log("graphic attributes", graphic.attributes);
+          //show notes
+          const notesField = graphic.attributes.notes;
+          const notesElement = document.getElementById("notesCell");
+
+          if (notesField) {
+            notesElement.value = notesField;
+          } else {
+            console.log("Notes filed is not set.");
+          }
+          //show notes
 
           // Highlight selected feature
           highlight = layerView.highlight(graphic);
@@ -559,6 +485,7 @@ require([
               threat: attr.Impact || "N/A",
               image_url: attr.image_url || null,
               image_name: attr.image_name || null,
+              notes: attr.notes || null,
             });
           })
           .catch((error) => {
@@ -599,6 +526,15 @@ require([
             `;
             countyTable.appendChild(threatsRow);
 
+            // Create Notes row
+            const notes = features.map((item) => item.notes)
+            const notesRow = document.createElement("tr");
+            threatsRow.innerHTML = `
+              <td class="label">Notes:</td>
+              <td class="value" id="notesCell">${notes}</td>
+            `;
+            countyTable.appendChild(notesRow);
+
             // Create images row
             const imagesRow = document.createElement("tr");
             const imagesContent = features
@@ -615,7 +551,6 @@ require([
             `;
             countyTable.appendChild(imagesRow);
           }
-
           container.appendChild(countyTable);
         }
       });
@@ -640,42 +575,33 @@ require([
         document
           .getElementById("updateBtn")
           .addEventListener("click", async () => {
-
             const checkboxes = document.querySelectorAll(
               "#impactFields input[type='checkbox']:checked"
             );
-            const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
 
-            for (let feature of selectedFeatures) {
-              feature.attributes.Impact = selectedValues.join(", ");
-            }
-
-            const edits = await featureLayer.applyEdits({
-              updateFeatures: selectedFeatures,
-            });
-            if (edits.updateFeatureResults.length > 0) {
-              alert("Impact Updated successfully!");
-            } else {
-              alert("No updates were made.");
-            }
-          });
-
-        //----------------Updating notes in the attributes-----------------
-        document
-          .getElementById("notesBtn")
-          .addEventListener("click", async () => {
-            console.log("notes section");
             const notes = document.getElementById("notesText").value;
 
-            for (let feature of selectedFeatures) {
-              feature.attributes.notes = notes;
+            if (checkboxes.length > 0) {
+              const selectedValues = Array.from(checkboxes).map(
+                (cb) => cb.value
+              );
+
+              for (let feature of selectedFeatures) {
+                feature.attributes.Impact = selectedValues.join(", ");
+              }
             }
 
+            if (notes) {
+              for (let feature of selectedFeatures) {
+                feature.attributes.notes = notes;
+              }
+            }
             const edits = await featureLayer.applyEdits({
               updateFeatures: selectedFeatures,
             });
+
             if (edits.updateFeatureResults.length > 0) {
-              alert("Notes Updated successfully!");
+              alert("Updated successfully!");
             } else {
               alert("No updates were made.");
             }
@@ -908,22 +834,3 @@ countByField(fieldName);
 // Register both toggle buttons
 toggleBtn.addEventListener("click", toggleSidebar);
 toggleBtnMap.addEventListener("click", toggleSidebar);
-
-//toggle buttong for notes and impact field
-// document.getElementById("togglePanelBtn").addEventListener("click", () => {
-//   const notesPanel = document.getElementById("notesPanel");
-//   const impactFields = document.getElementById("impactFields");
-//   const toggleBtn = document.getElementById("togglePanelBtn");
-//   const icon = toggleBtn.querySelector("i");
-
-//   notesPanel.classList.toggle("hidden");
-//   impactFields.classList.toggle("hidden");
-
-//   if (notesPanel.classList.contains("hidden")) {
-//     toggleBtn.textContent = "Add Notes";
-//     toggleBtn.innerHTML = '<i class="fas fa-edit"></i> Show Notes';
-//   } else {
-//     toggleBtn.textContent = "Add Impact Fields";
-//     toggleBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Show Impact Fields';
-//   }
-// });
