@@ -10,7 +10,6 @@ require([
   "esri/widgets/Expand",
   "esri/widgets/Legend",
   "esri/widgets/Zoom",
-  "esri/rest/locator",
   "esri/widgets/BasemapGallery",
 ], (
   Map,
@@ -24,7 +23,6 @@ require([
   Expand,
   Legend,
   Zoom,
-  locator,
   BasemapGallery
 ) => {
   const map = new Map({ basemap: "streets" });
@@ -455,116 +453,227 @@ require([
 
       const container = document.getElementById("tableContainer");
       container.innerHTML = ""; // Clear before adding new tables
+      // const groupedData = {};
 
-      const locatorUrl =
-        "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
+      // const reverseGeocodePromises = selectedFeatures.map((feature) => {
+      //   const attr = feature.attributes;
+      //   const county = attr.COUNTY || "Unknown County";
+      //   const area = attr.Work_Area_Name || "Unknown Area";
 
+      //   // Initialize county group
+      //   if (!groupedData[county]) {
+      //     groupedData[county] = {};
+      //   }
+
+      //   // Initialize area group within county
+      //   if (!groupedData[county][area]) {
+      //     groupedData[county][area] = [];
+      //   }
+
+      //   // Push feature data into the group
+      //   groupedData[county][area].push({
+      //     threat: attr.Impact || "N/A",
+      //     image_url: attr.image_url || null,
+      //     image_name: attr.image_name || null,
+      //     notes: attr.notes || null,
+      //     lat: attr.lat || null,
+      //     long: attr.lon || null
+      //   });
+      // });
+
+      // // Once all geocoding is done, build the HTML
+      // Promise.all(reverseGeocodePromises).then(() => {
+      //   for (const [county, areas] of Object.entries(groupedData)) {
+      //     const countyTable = document.createElement("table");
+      //     countyTable.className = "featureTable";
+      //     countyTable.id = "featureTable"; // Match the original ID
+
+      //     // Create county row
+      //     const countyRow = document.createElement("tr");
+      //     countyRow.innerHTML = `
+      //       <td class="label">County:</td>
+      //       <td class="value" id="countyCell">${county}</td>
+      //     `;
+      //     countyTable.appendChild(countyRow);
+
+      //     for (const [area, features] of Object.entries(areas)) {
+      //       // Create area row
+      //       const areaRow = document.createElement("tr");
+      //       areaRow.innerHTML = `
+      //         <td class="label">Area:</td>
+      //         <td class="value" id="areaCell">${area}</td>
+      //       `;
+      //       countyTable.appendChild(areaRow);
+
+      //       // Create threats row
+      //       // const threats = features.map((item) => item.threat).join(", ");
+      //       const threatSet = new Set(features.map((item) => item.threat));
+      //       const threats = [...threatSet].join(", ");
+
+      //       const threatsRow = document.createElement("tr");
+      //       threatsRow.innerHTML = `
+      //         <td class="label">Threats:</td>
+      //         <td class="value" id="threatsCell">${threats}</td>
+      //       `;
+      //       countyTable.appendChild(threatsRow);
+
+      //       // Create Notes row
+      //       // const notes = features.map((item) => item.notes)
+      //       const notesSet = new Set(features.map((item) => item.notes));
+      //       const notes = [...notesSet].join(", ");
+
+      //       const notesRow = document.createElement("tr");
+      //       notesRow.innerHTML = `
+      //         <td class="label">Notes:</td>
+      //         <td class="value" id="notesCell">${notes}</td>
+      //       `;
+      //       countyTable.appendChild(notesRow);
+
+      //       //adding lat long to featur table
+      //       const lat = features.map((item) => item.lat)
+      //       const latRow = document.createElement("tr");
+      //       latRow.innerHTML = `
+      //         <td class="label">Latitude:</td>
+      //         <td class="value" id="latCell">${lat}</td>
+      //       `;
+      //       countyTable.appendChild(latRow);
+
+      //       const long = features.map((item) => item.long)
+      //       const longRow = document.createElement("tr");
+      //       longRow.innerHTML = `
+      //         <td class="label">Longitude:</td>
+      //         <td class="value" id="longCell">${long}</td>
+      //       `;
+      //       countyTable.appendChild(longRow);
+
+      //       // Create images row
+      //       const imagesRow = document.createElement("tr");
+      //       const imagesContent = features
+      //         .map((item) =>
+      //           item.image_url
+      //             ? `<img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />`
+      //             : "No image"
+      //         )
+      //         .join("<br>"); // Separate multiple images with line breaks
+
+      //       imagesRow.innerHTML = `
+      //         <td class="label">Images:</td>
+      //         <td class="value">${imagesContent}</td>
+      //       `;
+      //       countyTable.appendChild(imagesRow);
+      //     }
+      //     container.appendChild(countyTable);
+      //   }
+      // });
+
+      // Adding new functon to create feature table
       const groupedData = {};
 
-      const reverseGeocodePromises = selectedFeatures.map((feature) => {
+      selectedFeatures.forEach((feature) => {
         const attr = feature.attributes;
-        const latitude = attr.latitude || attr.Lat || attr.lat;
-        const longitude = attr.longitude || attr.Lon || attr.lon;
+        const county = attr.COUNTY || "Unknown County";
+        const area = attr.Work_Area_Name || "Unknown Area";
 
-        return locator
-          .locationToAddress(locatorUrl, {
-            location: { latitude, longitude },
-          })
-          .then((response) => {
-            const address = response.address;
-            const county = attr.COUNTY || "Unknown County";
-            const area = address || "Unknown Area";
-
-            // Initialize county group
-            if (!groupedData[county]) {
-              groupedData[county] = {};
-            }
-
-            // Initialize area group within county
-            if (!groupedData[county][area]) {
-              groupedData[county][area] = [];
-            }
-
-            // Push feature data into the group
-            groupedData[county][area].push({
-              threat: attr.Impact || "N/A",
-              image_url: attr.image_url || null,
-              image_name: attr.image_name || null,
-              notes: attr.notes || null,
-            });
-          })
-          .catch((error) => {
-            console.error("Reverse geocoding failed:", error);
-          });
-      });
-
-      // Once all geocoding is done, build the HTML
-      Promise.all(reverseGeocodePromises).then(() => {
-        for (const [county, areas] of Object.entries(groupedData)) {
-          const countyTable = document.createElement("table");
-          countyTable.className = "featureTable";
-          countyTable.id = "featureTable"; // Match the original ID
-
-          // Create county row
-          const countyRow = document.createElement("tr");
-          countyRow.innerHTML = `
-            <td class="label">County:</td>
-            <td class="value" id="countyCell">${county}</td>
-          `;
-          countyTable.appendChild(countyRow);
-
-          for (const [area, features] of Object.entries(areas)) {
-            // Create area row
-            const areaRow = document.createElement("tr");
-            areaRow.innerHTML = `
-              <td class="label">Area:</td>
-              <td class="value" id="areaCell">${area}</td>
-            `;
-            countyTable.appendChild(areaRow);
-
-            // Create threats row
-            // const threats = features.map((item) => item.threat).join(", ");
-            const threatSet = new Set(features.map((item) => item.threat));
-            const threats = [...threatSet].join(", ");
-
-            const threatsRow = document.createElement("tr");
-            threatsRow.innerHTML = `
-              <td class="label">Threats:</td>
-              <td class="value" id="threatsCell">${threats}</td>
-            `;
-            countyTable.appendChild(threatsRow);
-
-            // Create Notes row
-            // const notes = features.map((item) => item.notes)
-            const notesSet = new Set(features.map((item) => item.notes));
-            const notes = [...notesSet].join(", ");
-
-            const notesRow = document.createElement("tr");
-            notesRow.innerHTML = `
-              <td class="label">Notes:</td>
-              <td class="value" id="notesCell">${notes}</td>
-            `;
-            countyTable.appendChild(notesRow);
-
-            // Create images row
-            const imagesRow = document.createElement("tr");
-            const imagesContent = features
-              .map((item) =>
-                item.image_url
-                  ? `<img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />`
-                  : "No image"
-              )
-              .join("<br>"); // Separate multiple images with line breaks
-
-            imagesRow.innerHTML = `
-              <td class="label">Images:</td>
-              <td class="value">${imagesContent}</td>
-            `;
-            countyTable.appendChild(imagesRow);
-          }
-          container.appendChild(countyTable);
+        // Initialize county group
+        if (!groupedData[county]) {
+          groupedData[county] = {};
         }
+
+        // Initialize area group within county
+        if (!groupedData[county][area]) {
+          groupedData[county][area] = [];
+        }
+
+        // Push feature data into the group
+        groupedData[county][area].push({
+          threat: attr.Impact || "N/A",
+          image_url: attr.image_url || null,
+          image_name: attr.image_name || null,
+          notes: attr.notes || null,
+          location: attr.location || null,
+        });
       });
+
+      // Build the HTML directly
+      for (const [county, areas] of Object.entries(groupedData)) {
+        const countyTable = document.createElement("table");
+        countyTable.className = "featureTable";
+        countyTable.id = "featureTable"; // Match the original ID
+
+        // Create county row
+        const countyRow = document.createElement("tr");
+        countyRow.innerHTML = `
+    <td class="label">County:</td>
+    <td class="value" id="countyCell">${county}</td>
+  `;
+        countyTable.appendChild(countyRow);
+
+        for (const [area, features] of Object.entries(areas)) {
+          // Create area row
+          const areaRow = document.createElement("tr");
+          areaRow.innerHTML = `
+      <td class="label">Area:</td>
+      <td class="value" id="areaCell">${area}</td>
+    `;
+          countyTable.appendChild(areaRow);
+
+          // Create threats row
+          const threatSet = new Set(features.map((item) => item.threat));
+          const threats = [...threatSet].join(", ");
+
+          const threatsRow = document.createElement("tr");
+          threatsRow.innerHTML = `
+      <td class="label">Threats:</td>
+      <td class="value" id="threatsCell">${threats}</td>
+    `;
+          countyTable.appendChild(threatsRow);
+
+          // Create Notes row
+          const notesSet = new Set(features.map((item) => item.notes));
+          const notes = [...notesSet].join(", ");
+
+          const notesRow = document.createElement("tr");
+          notesRow.innerHTML = `
+      <td class="label">Notes:</td>
+      <td class="value" id="notesCell">${notes}</td>
+    `;
+          countyTable.appendChild(notesRow);
+
+          // Adding lat long to feature table
+          const location = features.map((item) => item.location);
+
+          //       const locationRow = document.createElement("tr");
+          //       locationRow.innerHTML = `
+          //   <td class="label">Location:</td>
+          //   <td class="value" id="locationCell">${location}</td>
+          // `;
+          //       countyTable.appendChild(locationRow);
+
+          // Create images row
+          const imagesRow = document.createElement("tr");
+          const imagesContent = features
+            .map((item) => {
+              if (item.image_url) {
+                const cleanLocation = item.location.replace(/[()]/g, "");
+                return `
+                  <div class="image-with-location">
+                    <div class="location-info">${cleanLocation}</div>
+                    <img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />
+                  </div>
+                `;
+              }
+              return "No image";
+            })
+            .join("<br>"); // Separate multiple images with line breaks
+
+          imagesRow.innerHTML = `
+          <td class="label">Images:</td>
+      <td class="value">${imagesContent}</td>
+    `;
+          countyTable.appendChild(imagesRow);
+        }
+        container.appendChild(countyTable);
+      }
     }
 
     sketch.on("create", async (event) => {
@@ -672,110 +781,380 @@ async function generatePDF() {
   }
 }
 
+// async function generatePDFNow(element) {
+//   // Create a print window
+//   const printWindow = window.open("", "_blank", "width=800,height=600");
+
+//   if (!printWindow) {
+//     throw new Error("Popup was blocked. Please allow popups for this site.");
+//   }
+
+//   // Prepare print-specific styles
+//   const printStyles = `
+//     <style>
+//       @page {
+//         size: A4;
+//         margin: 1cm;
+//       }
+//       body {
+//         font-family: Arial, sans-serif;
+//         margin: 0;
+//         padding: 20px;
+//       }
+//       .featureTable {
+//         width: 100%;
+//         border-collapse: collapse;
+//         margin-bottom: 20px;
+//         page-break-inside: avoid;
+//       }
+//       .featureTable td {
+//         padding: 8px;
+//         border: 1px solid #ddd;
+//       }
+//       .label {
+//         font-weight: bold;
+//         width: 30%;
+//       }
+//       .img-fluid {
+//         max-width: 100%;
+//         height: auto;
+//         max-height:200px;
+//         margin-bottom:5px
+//       }
+//       .avoid-break {
+//         page-break-inside: avoid;
+//       }
+//       .page-break {
+//         page-break-after: always;
+//       }
+//       @media print {
+//         .no-print {
+//           display: none;
+//         }
+//       }
+//     </style>
+//   `;
+
+//   // Create the print document
+//   printWindow.document.open();
+//   printWindow.document.write(`
+//     <html>
+//       <head>
+//         <title>Debris Threats Report</title>
+//         ${printStyles}
+//       </head>
+//       <body>
+//         <div id="print-content"></div>
+//       </body>
+//     </html>
+//   `);
+
+//   // Process images to ensure they load
+//   const images = element.querySelectorAll("img");
+//   const imagePromises = Array.from(images).map((img) => {
+//     return new Promise((resolve) => {
+//       if (img.complete && img.naturalHeight !== 0) {
+//         resolve();
+//       } else {
+//         img.onload = resolve;
+//         img.onerror = resolve; // Continue even if image fails
+//       }
+//     });
+//   });
+
+//   // Wait for images to load
+//   await Promise.all(imagePromises);
+
+//   // Append the content to the print window
+//   const printContent = printWindow.document.getElementById("print-content");
+//   printContent.appendChild(element.cloneNode(true));
+
+//   printWindow.document.close();
+
+//   // Wait for the print window to fully load
+//   await new Promise((resolve) => {
+//     printWindow.onload = resolve;
+//   });
+
+//   // Trigger print after a short delay
+//   setTimeout(() => {
+//     printWindow.print();
+
+//     // Close the window after printing (with delay for Firefox)
+//     setTimeout(() => {
+//       printWindow.close();
+//     }, 1000);
+//   }, 500);
+// }
+
 async function generatePDFNow(element) {
-  // Create a print window
   const printWindow = window.open("", "_blank", "width=800,height=600");
+  if (!printWindow) throw new Error("Popup blocked. Please allow popups.");
 
-  if (!printWindow) {
-    throw new Error("Popup was blocked. Please allow popups for this site.");
-  }
+  // Get current date/time in a formatted way
+  const now = new Date();
+  const formattedDate = `${now.getDate()}/${
+    now.getMonth() + 1
+  }/${now.getFullYear()}`;
+  const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
+    2,
+    "0"
+  )}:${String(now.getSeconds()).padStart(2, "0")}`;
 
-  // Prepare print-specific styles
+  // Enhanced CSS with better formatting
   const printStyles = `
     <style>
       @page {
         size: A4;
-        margin: 1cm;
+        margin: 1.5cm 1cm 2cm 1cm;
+
+        @top-left {
+          content: "Debris Threats Report";
+          font-size: 10pt;
+          font-family: Arial, sans-serif;
+          font-weight: bold;
+        }
+
+        @top-right {
+          content: "${formattedDate}, ${formattedTime}";
+          font-size: 10pt;
+          font-family: Arial, sans-serif;
+        }
+
+        @bottom-center {
+          content: "Page " counter(page) " of " counter(pages);
+          font-size: 9pt;
+          font-family: Arial, sans-serif;
+          color: #555;
+        }
       }
+
       body {
         font-family: Arial, sans-serif;
+        line-height: 1.5;
+        color: #333;
         margin: 0;
+        padding: 0;
+      }
+
+      .report-container {
         padding: 20px;
       }
-      .featureTable {
-        width: 100%;
-        border-collapse: collapse;
+
+      .report-header {
         margin-bottom: 20px;
+        border-bottom: 2px solid #0066cc;
+        padding-bottom: 10px;
+      }
+
+      .report-title {
+        font-size: 18pt;
+        color: #0066cc;
+        margin: 0 0 5px 0;
+      }
+
+      .report-subtitle {
+        font-size: 12pt;
+        color: #666;
+        margin: 0;
+      }
+
+      .section {
+        margin-bottom: 25px;
         page-break-inside: avoid;
       }
-      .featureTable td {
+
+      .section-title {
+        font-size: 14pt;
+        color: #0066cc;
+        margin: 0 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+      }
+
+      .data-table th {
+        background-color: #f5f5f5;
+        text-align: left;
+        padding: 8px;
+        border: 1px solid #ddd;
+        font-weight: bold;
+      }
+
+      .data-table td {
         padding: 8px;
         border: 1px solid #ddd;
       }
-      .label {
+
+      .coordinates {
+        font-family: monospace;
+        background-color: #f9f9f9;
+        padding: 5px;
+        border-radius: 3px;
+        display: inline-block;
         font-weight: bold;
-        width: 30%;
+
+        // margin: 3px 0;
       }
-      .img-fluid {
-        max-width: 100%;
-        height: auto;
-        max-height:200px;
-        margin-bottom:5px
-      }
-      .avoid-break {
+
+      .image-container {
+        // margin: 15px 0;
         page-break-inside: avoid;
       }
+
+      .image-container img {
+        max-width: 100%;
+        height: auto;
+        max-height: 200px;
+        border: 1px solid #ddd;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .image-caption {
+        font-size: 10pt;
+        color: #666;
+        text-align: center;
+      }
+
+      .notes {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-left: 3px solid #0066cc;
+        margin: 10px 0;
+      }
+
       .page-break {
         page-break-after: always;
       }
+
       @media print {
         .no-print {
           display: none;
+        }
+        .image-group {
+          break-after: page;
+        }
+        .image-container {
+          break-inside: avoid;
         }
       }
     </style>
   `;
 
-  // Create the print document
-  printWindow.document.open();
-  printWindow.document.write(`
+  // Create the complete HTML document
+  const htmlContent = `
+    <!DOCTYPE html>
     <html>
       <head>
         <title>Debris Threats Report</title>
         ${printStyles}
       </head>
       <body>
-        <div id="print-content"></div>
+        <div class="report-container">
+          <div class="report-header">
+            <h1 class="report-title">Debris Threats Report</h1>
+            <p class="report-subtitle">Generated on ${formattedDate} at ${formattedTime}</p>
+          </div>
+          <div id="print-content"></div>
+        </div>
       </body>
     </html>
-  `);
+  `;
 
-  // Process images to ensure they load
-  const images = element.querySelectorAll("img");
-  const imagePromises = Array.from(images).map((img) => {
-    return new Promise((resolve) => {
-      if (img.complete && img.naturalHeight !== 0) {
-        resolve();
-      } else {
-        img.onload = resolve;
-        img.onerror = resolve; // Continue even if image fails
-      }
-    });
-  });
-
-  // Wait for images to load
-  await Promise.all(imagePromises);
-
-  // Append the content to the print window
-  const printContent = printWindow.document.getElementById("print-content");
-  printContent.appendChild(element.cloneNode(true));
-
+  // Write the document
+  printWindow.document.open();
+  printWindow.document.write(htmlContent);
   printWindow.document.close();
 
-  // Wait for the print window to fully load
-  await new Promise((resolve) => {
-    printWindow.onload = resolve;
+  // Process and format the content
+  const printContent = printWindow.document.getElementById("print-content");
+  const contentClone = element.cloneNode(true);
+
+  // Format tables and content
+  const tables = contentClone.querySelectorAll("table");
+  tables.forEach((table) => {
+    table.className = "data-table";
   });
 
-  // Trigger print after a short delay
+  // Format coordinates
+  const coords = contentClone.innerHTML.match(/-?\d+\.\d+/g) || [];
+  coords.forEach((coord) => {
+    contentClone.innerHTML = contentClone.innerHTML.replace(
+      coord,
+      `<span class="coordinates">${coord}</span>`
+    );
+  });
+
+  // Format images
+  const images = contentClone.querySelectorAll("img");
+  images.forEach((img) => {
+    const container = printWindow.document.createElement("div");
+    container.className = "image-container";
+    // const caption = printWindow.document.createElement("div");
+    // caption.className = "image-caption";
+    // caption.textContent = "Location image";
+    container.appendChild(img.cloneNode());
+    // container.appendChild(caption);
+    img.replaceWith(container);
+  });
+
+  // const images = contentClone.querySelectorAll("img");
+  // let groupContainer = null;
+  // let count = 0;
+
+  // images.forEach((img, index) => {
+  //   // Start a new container every 4 images
+  //   if (count % 4 === 0) {
+  //     groupContainer = printWindow.document.createElement("div");
+  //     groupContainer.className = "image-container";
+  //     printWindow.document.body.appendChild(groupContainer);
+  //   }
+
+  //   const imageClone = img.cloneNode();
+  //   groupContainer.appendChild(imageClone);
+  //   count++;
+  // });
+
+  // Add section wrappers
+  const sections = contentClone.querySelectorAll(".featureTable");
+  sections.forEach((section, index) => {
+    const wrapper = printWindow.document.createElement("div");
+    wrapper.className = "section";
+    if (index > 0) {
+      wrapper.style.marginTop = "30px";
+    }
+    section.replaceWith(wrapper);
+    wrapper.appendChild(section);
+
+    // Add section title
+    const title = printWindow.document.createElement("h2");
+    title.className = "section-title";
+    title.textContent = `Location ${index + 1}`;
+    wrapper.insertBefore(title, wrapper.firstChild);
+  });
+
+  printContent.appendChild(contentClone);
+
+  // Wait for resources to load
+  await new Promise((resolve) => {
+    if (printWindow.document.readyState === "complete") {
+      resolve();
+    } else {
+      printWindow.addEventListener("load", resolve);
+    }
+  });
+
+  // Print with delay
   setTimeout(() => {
     printWindow.print();
-
-    // Close the window after printing (with delay for Firefox)
-    setTimeout(() => {
-      printWindow.close();
-    }, 1000);
-  }, 500);
+    setTimeout(() => printWindow.close(), 1000);
+  }, 1000);
 }
 
 const toggleBtn = document.getElementById("toggleSidebar");
