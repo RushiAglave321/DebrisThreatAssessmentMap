@@ -211,6 +211,46 @@ require([
     labelsVisible: true, // Important!
   });
 
+  let Work_Layer = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FL_Waterway_Debris___Completed_Work_Areas/FeatureServer/0",
+    outFields: ["*"],
+    title: "Work Area",
+    visible: true,
+    // renderer: {
+    //   type: "simple", // SimpleRenderer
+    //   symbol: {
+    //     type: "simple-fill", // For polygons
+    //     color: "rgba(0,0,0,0)", // 50% opacity
+    //     outline: {
+    //       color: "blue",
+    //       width: 1,
+    //     },
+    //   },
+    // },
+    // labelingInfo: [
+    //   {
+    //     labelExpressionInfo: {
+    //       expression: "$feature.County", // Change "NAME" to your desired field
+    //     },
+    //     symbol: {
+    //       type: "text", // autocasts as new TextSymbol()
+    //       color: "white",
+    //       haloColor: "black",
+    //       haloSize: "2px",
+    //       font: {
+    //         size: 12,
+    //         family: "sans-serif",
+    //         weight: "bold",
+    //       },
+    //     },
+    //     labelPlacement: "center-right",
+    //     minScale: 800000,
+    //   },
+    // ],
+
+    // labelsVisible: true, // Important!
+  });
+
   map.addMany([
     County_Layer,
     THREATS_Protected_Lands_Threat_Basic,
@@ -221,6 +261,7 @@ require([
     THREATS_Flood_Mitigation_Threats_Basic,
     THREATS_PS_StormSurge,
     THREATS_Public_Safety_Threats_Basic,
+    Work_Layer,
     ticketData,
     featureLayer,
   ]);
@@ -753,6 +794,7 @@ require([
 });
 //-------------------------------printing pdf----------------------------------------------------
 
+// functions to print 4 images per page just printing it at last
 async function generatePDF() {
   const container = document.getElementById("tableContainer");
 
@@ -770,7 +812,7 @@ async function generatePDF() {
   container.style.overflow = "visible";
 
   try {
-    await generatePDFNow(container);
+    await generatePDFNow(element);
   } catch (error) {
     console.error("Printing failed:", error);
     alert("Failed to generate PDF. Please try again.");
@@ -781,125 +823,14 @@ async function generatePDF() {
   }
 }
 
-// async function generatePDFNow(element) {
-//   // Create a print window
-//   const printWindow = window.open("", "_blank", "width=800,height=600");
-
-//   if (!printWindow) {
-//     throw new Error("Popup was blocked. Please allow popups for this site.");
-//   }
-
-//   // Prepare print-specific styles
-//   const printStyles = `
-//     <style>
-//       @page {
-//         size: A4;
-//         margin: 1cm;
-//       }
-//       body {
-//         font-family: Arial, sans-serif;
-//         margin: 0;
-//         padding: 20px;
-//       }
-//       .featureTable {
-//         width: 100%;
-//         border-collapse: collapse;
-//         margin-bottom: 20px;
-//         page-break-inside: avoid;
-//       }
-//       .featureTable td {
-//         padding: 8px;
-//         border: 1px solid #ddd;
-//       }
-//       .label {
-//         font-weight: bold;
-//         width: 30%;
-//       }
-//       .img-fluid {
-//         max-width: 100%;
-//         height: auto;
-//         max-height:200px;
-//         margin-bottom:5px
-//       }
-//       .avoid-break {
-//         page-break-inside: avoid;
-//       }
-//       .page-break {
-//         page-break-after: always;
-//       }
-//       @media print {
-//         .no-print {
-//           display: none;
-//         }
-//       }
-//     </style>
-//   `;
-
-//   // Create the print document
-//   printWindow.document.open();
-//   printWindow.document.write(`
-//     <html>
-//       <head>
-//         <title>Debris Threats Report</title>
-//         ${printStyles}
-//       </head>
-//       <body>
-//         <div id="print-content"></div>
-//       </body>
-//     </html>
-//   `);
-
-//   // Process images to ensure they load
-//   const images = element.querySelectorAll("img");
-//   const imagePromises = Array.from(images).map((img) => {
-//     return new Promise((resolve) => {
-//       if (img.complete && img.naturalHeight !== 0) {
-//         resolve();
-//       } else {
-//         img.onload = resolve;
-//         img.onerror = resolve; // Continue even if image fails
-//       }
-//     });
-//   });
-
-//   // Wait for images to load
-//   await Promise.all(imagePromises);
-
-//   // Append the content to the print window
-//   const printContent = printWindow.document.getElementById("print-content");
-//   printContent.appendChild(element.cloneNode(true));
-
-//   printWindow.document.close();
-
-//   // Wait for the print window to fully load
-//   await new Promise((resolve) => {
-//     printWindow.onload = resolve;
-//   });
-
-//   // Trigger print after a short delay
-//   setTimeout(() => {
-//     printWindow.print();
-
-//     // Close the window after printing (with delay for Firefox)
-//     setTimeout(() => {
-//       printWindow.close();
-//     }, 1000);
-//   }, 500);
-// }
-
 async function generatePDFNow(element) {
   const printWindow = window.open("", "_blank", "width=800,height=600");
   if (!printWindow) throw new Error("Popup blocked. Please allow popups.");
 
   // Get current date/time in a formatted way
   const now = new Date();
-  const formattedDate = `${now.getDate()}/${
-    now.getMonth() + 1
-  }/${now.getFullYear()}`;
-  const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
-    2,
-    "0"
-  )}:${String(now.getSeconds()).padStart(2, "0")}`;
+  const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+  const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
 
   // Enhanced CSS with better formatting
   const printStyles = `
@@ -972,76 +903,75 @@ async function generatePDFNow(element) {
         border-bottom: 1px solid #ddd;
       }
 
-      .data-table {
+      .featureTable {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 15px;
       }
 
-      .data-table th {
+      .featureTable .label {
         background-color: #f5f5f5;
         text-align: left;
         padding: 8px;
         border: 1px solid #ddd;
         font-weight: bold;
+        width: 20%;
       }
 
-      .data-table td {
+      .featureTable .value {
         padding: 8px;
         border: 1px solid #ddd;
+        width: 80%;
       }
 
-      .coordinates {
+      .location-info {
         font-family: monospace;
         background-color: #f9f9f9;
-        padding: 5px;
+        padding: 2px 5px;
         border-radius: 3px;
-        display: inline-block;
-        font-weight: bold;
-
-        // margin: 3px 0;
+        font-size: 10px;
+        margin-bottom: 5px;
       }
 
-      .image-container {
-        // margin: 15px 0;
+      .images-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+        page-break-inside: auto;
+      }
+
+      .image-page {
+        page-break-after: auto;
+      }
+
+      .image-with-location {
         page-break-inside: avoid;
+        border: 1px solid #eee;
+        padding: 5px;
+        background: white;
       }
 
-      .image-container img {
+      .image-with-location img {
         max-width: 100%;
         height: auto;
-        max-height: 200px;
-        border: 1px solid #ddd;
+        max-height: 150px;
         display: block;
-        margin-bottom: 2px;
-      }
-
-      .image-caption {
-        font-size: 10pt;
-        color: #666;
-        text-align: center;
-      }
-
-      .notes {
-        background-color: #f5f5f5;
-        padding: 10px;
-        border-left: 3px solid #0066cc;
-        margin: 10px 0;
-      }
-
-      .page-break {
-        page-break-after: always;
+        margin: 0 auto;
       }
 
       @media print {
         .no-print {
           display: none;
         }
-        .image-group {
-          break-after: page;
+        .section {
+          page-break-inside: avoid;
         }
-        .image-container {
-          break-inside: avoid;
+        .images-grid {
+          page-break-inside: auto;
+        }
+        .image-with-location {
+          page-break-inside: avoid;
         }
       }
     </style>
@@ -1076,69 +1006,51 @@ async function generatePDFNow(element) {
   const printContent = printWindow.document.getElementById("print-content");
   const contentClone = element.cloneNode(true);
 
-  // Format tables and content
-  const tables = contentClone.querySelectorAll("table");
-  tables.forEach((table) => {
-    table.className = "data-table";
-  });
-
-  // Format coordinates
-  const coords = contentClone.innerHTML.match(/-?\d+\.\d+/g) || [];
-  coords.forEach((coord) => {
-    contentClone.innerHTML = contentClone.innerHTML.replace(
-      coord,
-      `<span class="coordinates">${coord}</span>`
-    );
-  });
-
-  // Format images
-  const images = contentClone.querySelectorAll("img");
-  images.forEach((img) => {
-    const container = printWindow.document.createElement("div");
-    container.className = "image-container";
-    // const caption = printWindow.document.createElement("div");
-    // caption.className = "image-caption";
-    // caption.textContent = "Location image";
-    container.appendChild(img.cloneNode());
-    // container.appendChild(caption);
-    img.replaceWith(container);
-  });
-
-  // const images = contentClone.querySelectorAll("img");
-  // let groupContainer = null;
-  // let count = 0;
-
-  // images.forEach((img, index) => {
-  //   // Start a new container every 4 images
-  //   if (count % 4 === 0) {
-  //     groupContainer = printWindow.document.createElement("div");
-  //     groupContainer.className = "image-container";
-  //     printWindow.document.body.appendChild(groupContainer);
-  //   }
-
-  //   const imageClone = img.cloneNode();
-  //   groupContainer.appendChild(imageClone);
-  //   count++;
-  // });
-
-  // Add section wrappers
-  const sections = contentClone.querySelectorAll(".featureTable");
-  sections.forEach((section, index) => {
-    const wrapper = printWindow.document.createElement("div");
-    wrapper.className = "section";
-    if (index > 0) {
-      wrapper.style.marginTop = "30px";
+  // Process each feature table to wrap images in grid
+  const featureTables = contentClone.querySelectorAll('.featureTable');
+  featureTables.forEach((table, index) => {
+    // Find the images cell (5th row's value cell)
+    const imagesCell = table.querySelector('tr:nth-child(5) .value');
+    
+    if (imagesCell) {
+      // Get all image-with-location divs
+      const imageDivs = Array.from(imagesCell.querySelectorAll('.image-with-location'));
+      
+      if (imageDivs.length > 0) {
+        // Create a single grid wrapper div
+        const gridWrapper = printWindow.document.createElement('div');
+        gridWrapper.className = 'images-grid';
+        
+        // Move each image div into the grid wrapper
+        imageDivs.forEach(div => {
+          gridWrapper.appendChild(div);
+        });
+        
+        // Replace the cell's content with the grid wrapper
+        imagesCell.innerHTML = '';
+        imagesCell.appendChild(gridWrapper);
+      }
     }
-    section.replaceWith(wrapper);
-    wrapper.appendChild(section);
-
+    
+    // Create section wrapper
+    const sectionWrapper = printWindow.document.createElement("div");
+    sectionWrapper.className = "section";
+    if (index > 0) {
+      sectionWrapper.style.marginTop = "30px";
+    }
+    
     // Add section title
     const title = printWindow.document.createElement("h2");
     title.className = "section-title";
     title.textContent = `Location ${index + 1}`;
-    wrapper.insertBefore(title, wrapper.firstChild);
+    sectionWrapper.appendChild(title);
+    
+    // Move the table into the section wrapper
+    table.parentNode.insertBefore(sectionWrapper, table);
+    sectionWrapper.appendChild(table);
   });
 
+  // Add the processed content to the print window
   printContent.appendChild(contentClone);
 
   // Wait for resources to load
