@@ -210,7 +210,6 @@ require([
 
     labelsVisible: true, // Important!
   });
-
   let Work_Layer = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FL_Waterway_Debris___Completed_Work_Areas/FeatureServer/0",
     outFields: ["*"],
@@ -247,15 +246,52 @@ require([
       if (graphics.length > 0) {
         // Create a popup content string for all features under the click
         let popupContent = "";
+        const orderedFields = [
+          "COUNTY",
+          "Work_Area_Name",
+          "Impact",
+          "location",
+          "image_name",
+          "image_url",
+          "notes",
+        ];
+        const hiddenFields = [
+          "fid",
+          "lat",
+          "lon",
+          "CreationDate",
+          "Creator",
+          "EditDate",
+          "Editor",
+          "GlobalID",
+        ]; // fields you want to hide
 
         graphics.forEach((result, index) => {
           const attrs = result.graphic.attributes;
           popupContent += `<b>Layer ${index + 1} - ${
             result.graphic.layer.title
           }</b><br>`;
-          for (const key in attrs) {
-            popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
+
+          if (index === 0) {
+            // Show attributes in defined order for first layer
+            orderedFields.forEach((key) => {
+              if (attrs[key] !== undefined) {
+                if (key === "image_url" && attrs[key]) {
+                  popupContent += `<b>Image:</b><br><img src="${attrs[key]}" style="max-width:300px;"><br>`;
+                } else {
+                  popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
+                }
+              }
+            });
+          } else {
+            // For other layers, show all attributes except hidden ones
+            for (const key in attrs) {
+              if (!hiddenFields.includes(key)) {
+                popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
+              }
+            }
           }
+
           popupContent += "<hr>";
         });
 
@@ -690,18 +726,18 @@ async function generatePDFNow(element) {
         size: A4;
         margin: 1.5cm 1cm 2cm 1cm;
 
-        @top-left {
-          content: "Debris Threats Report";
-          font-size: 10pt;
-          font-family: Arial, sans-serif;
-          font-weight: bold;
-        }
+        // @top-left {
+        //   content: "Debris Threats Report";
+        //   font-size: 10pt;
+        //   font-family: Arial, sans-serif;
+        //   font-weight: bold;
+        // }
 
-        @top-right {
-          content: "${formattedDate}, ${formattedTime}";
-          font-size: 10pt;
-          font-family: Arial, sans-serif;
-        }
+        // @top-right {
+        //   content: "${formattedDate}, ${formattedTime}";
+        //   font-size: 10pt;
+        //   font-family: Arial, sans-serif;
+        // }
 
         @bottom-center {
           content: "Page " counter(page) " of " counter(pages);
@@ -849,10 +885,10 @@ async function generatePDFNow(element) {
   sectionWrapper.className = "section";
 
   // Optional: section-wide title
-  const sectionTitle = printWindow.document.createElement("h2");
-  sectionTitle.className = "section-title";
-  sectionTitle.textContent = "Debris Threats Details";
-  sectionWrapper.appendChild(sectionTitle);
+  // const sectionTitle = printWindow.document.createElement("h2");
+  // sectionTitle.className = "section-title";
+  // sectionTitle.textContent = "Debris Threats Details";
+  // sectionWrapper.appendChild(sectionTitle);
 
   // Loop through and process all tables
   featureTables.forEach((table, index) => {
@@ -892,7 +928,7 @@ async function generatePDFNow(element) {
 
   setTimeout(() => {
     printWindow.print();
-    setTimeout(() => printWindow.close(), 1000);
+    setTimeout(() => printWindow.close(), 3000);
   }, 1000);
 }
 
