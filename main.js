@@ -216,39 +216,6 @@ require([
     outFields: ["*"],
     title: "Work Area",
     visible: true,
-    // renderer: {
-    //   type: "simple", // SimpleRenderer
-    //   symbol: {
-    //     type: "simple-fill", // For polygons
-    //     color: "rgba(0,0,0,0)", // 50% opacity
-    //     outline: {
-    //       color: "blue",
-    //       width: 1,
-    //     },
-    //   },
-    // },
-    // labelingInfo: [
-    //   {
-    //     labelExpressionInfo: {
-    //       expression: "$feature.County", // Change "NAME" to your desired field
-    //     },
-    //     symbol: {
-    //       type: "text", // autocasts as new TextSymbol()
-    //       color: "white",
-    //       haloColor: "black",
-    //       haloSize: "2px",
-    //       font: {
-    //         size: 12,
-    //         family: "sans-serif",
-    //         weight: "bold",
-    //       },
-    //     },
-    //     labelPlacement: "center-right",
-    //     minScale: 800000,
-    //   },
-    // ],
-
-    // labelsVisible: true, // Important!
   });
 
   map.addMany([
@@ -494,118 +461,6 @@ require([
 
       const container = document.getElementById("tableContainer");
       container.innerHTML = ""; // Clear before adding new tables
-      // const groupedData = {};
-
-      // const reverseGeocodePromises = selectedFeatures.map((feature) => {
-      //   const attr = feature.attributes;
-      //   const county = attr.COUNTY || "Unknown County";
-      //   const area = attr.Work_Area_Name || "Unknown Area";
-
-      //   // Initialize county group
-      //   if (!groupedData[county]) {
-      //     groupedData[county] = {};
-      //   }
-
-      //   // Initialize area group within county
-      //   if (!groupedData[county][area]) {
-      //     groupedData[county][area] = [];
-      //   }
-
-      //   // Push feature data into the group
-      //   groupedData[county][area].push({
-      //     threat: attr.Impact || "N/A",
-      //     image_url: attr.image_url || null,
-      //     image_name: attr.image_name || null,
-      //     notes: attr.notes || null,
-      //     lat: attr.lat || null,
-      //     long: attr.lon || null
-      //   });
-      // });
-
-      // // Once all geocoding is done, build the HTML
-      // Promise.all(reverseGeocodePromises).then(() => {
-      //   for (const [county, areas] of Object.entries(groupedData)) {
-      //     const countyTable = document.createElement("table");
-      //     countyTable.className = "featureTable";
-      //     countyTable.id = "featureTable"; // Match the original ID
-
-      //     // Create county row
-      //     const countyRow = document.createElement("tr");
-      //     countyRow.innerHTML = `
-      //       <td class="label">County:</td>
-      //       <td class="value" id="countyCell">${county}</td>
-      //     `;
-      //     countyTable.appendChild(countyRow);
-
-      //     for (const [area, features] of Object.entries(areas)) {
-      //       // Create area row
-      //       const areaRow = document.createElement("tr");
-      //       areaRow.innerHTML = `
-      //         <td class="label">Area:</td>
-      //         <td class="value" id="areaCell">${area}</td>
-      //       `;
-      //       countyTable.appendChild(areaRow);
-
-      //       // Create threats row
-      //       // const threats = features.map((item) => item.threat).join(", ");
-      //       const threatSet = new Set(features.map((item) => item.threat));
-      //       const threats = [...threatSet].join(", ");
-
-      //       const threatsRow = document.createElement("tr");
-      //       threatsRow.innerHTML = `
-      //         <td class="label">Threats:</td>
-      //         <td class="value" id="threatsCell">${threats}</td>
-      //       `;
-      //       countyTable.appendChild(threatsRow);
-
-      //       // Create Notes row
-      //       // const notes = features.map((item) => item.notes)
-      //       const notesSet = new Set(features.map((item) => item.notes));
-      //       const notes = [...notesSet].join(", ");
-
-      //       const notesRow = document.createElement("tr");
-      //       notesRow.innerHTML = `
-      //         <td class="label">Notes:</td>
-      //         <td class="value" id="notesCell">${notes}</td>
-      //       `;
-      //       countyTable.appendChild(notesRow);
-
-      //       //adding lat long to featur table
-      //       const lat = features.map((item) => item.lat)
-      //       const latRow = document.createElement("tr");
-      //       latRow.innerHTML = `
-      //         <td class="label">Latitude:</td>
-      //         <td class="value" id="latCell">${lat}</td>
-      //       `;
-      //       countyTable.appendChild(latRow);
-
-      //       const long = features.map((item) => item.long)
-      //       const longRow = document.createElement("tr");
-      //       longRow.innerHTML = `
-      //         <td class="label">Longitude:</td>
-      //         <td class="value" id="longCell">${long}</td>
-      //       `;
-      //       countyTable.appendChild(longRow);
-
-      //       // Create images row
-      //       const imagesRow = document.createElement("tr");
-      //       const imagesContent = features
-      //         .map((item) =>
-      //           item.image_url
-      //             ? `<img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />`
-      //             : "No image"
-      //         )
-      //         .join("<br>"); // Separate multiple images with line breaks
-
-      //       imagesRow.innerHTML = `
-      //         <td class="label">Images:</td>
-      //         <td class="value">${imagesContent}</td>
-      //       `;
-      //       countyTable.appendChild(imagesRow);
-      //     }
-      //     container.appendChild(countyTable);
-      //   }
-      // });
 
       // Adding new functon to create feature table
       const groupedData = {};
@@ -683,13 +538,6 @@ require([
           // Adding lat long to feature table
           const location = features.map((item) => item.location);
 
-          //       const locationRow = document.createElement("tr");
-          //       locationRow.innerHTML = `
-          //   <td class="label">Location:</td>
-          //   <td class="value" id="locationCell">${location}</td>
-          // `;
-          //       countyTable.appendChild(locationRow);
-
           // Create images row
           const imagesRow = document.createElement("tr");
           const imagesContent = features
@@ -709,7 +557,7 @@ require([
 
           imagesRow.innerHTML = `
           <td class="label">Images:</td>
-      <td class="value">${imagesContent}</td>
+      <td class="value images-cell">${imagesContent}</td>
     `;
           countyTable.appendChild(imagesRow);
         }
@@ -827,12 +675,15 @@ async function generatePDFNow(element) {
   const printWindow = window.open("", "_blank", "width=800,height=600");
   if (!printWindow) throw new Error("Popup blocked. Please allow popups.");
 
-  // Get current date/time in a formatted way
   const now = new Date();
-  const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
-  const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+  const formattedDate = `${now.getDate()}/${
+    now.getMonth() + 1
+  }/${now.getFullYear()}`;
+  const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
+    2,
+    "0"
+  )}:${String(now.getSeconds()).padStart(2, "0")}`;
 
-  // Enhanced CSS with better formatting
   const printStyles = `
     <style>
       @page {
@@ -891,14 +742,16 @@ async function generatePDFNow(element) {
       }
 
       .section {
-        margin-bottom: 25px;
-        page-break-inside: avoid;
+        margin: 0;
+        page-break-inside: auto;
+        page-break-before: auto;
+        page-break-after: auto;
       }
 
       .section-title {
         font-size: 14pt;
         color: #0066cc;
-        margin: 0 0 10px 0;
+        margin: 10px 0;
         padding-bottom: 5px;
         border-bottom: 1px solid #ddd;
       }
@@ -941,10 +794,6 @@ async function generatePDFNow(element) {
         page-break-inside: auto;
       }
 
-      .image-page {
-        page-break-after: auto;
-      }
-
       .image-with-location {
         page-break-inside: avoid;
         border: 1px solid #eee;
@@ -964,20 +813,10 @@ async function generatePDFNow(element) {
         .no-print {
           display: none;
         }
-        .section {
-          page-break-inside: avoid;
-        }
-        .images-grid {
-          page-break-inside: auto;
-        }
-        .image-with-location {
-          page-break-inside: avoid;
-        }
       }
     </style>
   `;
 
-  // Create the complete HTML document
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -997,63 +836,52 @@ async function generatePDFNow(element) {
     </html>
   `;
 
-  // Write the document
   printWindow.document.open();
   printWindow.document.write(htmlContent);
   printWindow.document.close();
 
-  // Process and format the content
   const printContent = printWindow.document.getElementById("print-content");
   const contentClone = element.cloneNode(true);
+  const featureTables = contentClone.querySelectorAll(".featureTable");
 
-  // Process each feature table to wrap images in grid
-  const featureTables = contentClone.querySelectorAll('.featureTable');
+  // Create one unified section wrapper
+  const sectionWrapper = printWindow.document.createElement("div");
+  sectionWrapper.className = "section";
+
+  // Optional: section-wide title
+  const sectionTitle = printWindow.document.createElement("h2");
+  sectionTitle.className = "section-title";
+  sectionTitle.textContent = "Debris Threats Details";
+  sectionWrapper.appendChild(sectionTitle);
+
+  // Loop through and process all tables
   featureTables.forEach((table, index) => {
-    // Find the images cell (5th row's value cell)
-    const imagesCell = table.querySelector('tr:nth-child(5) .value');
-    
-    if (imagesCell) {
-      // Get all image-with-location divs
-      const imageDivs = Array.from(imagesCell.querySelectorAll('.image-with-location'));
-      
+    // Process images in the table
+    const imagesCells = table.querySelectorAll(".images-cell");
+    imagesCells.forEach((imagesCell) => {
+      const imageDivs = Array.from(
+        imagesCell.querySelectorAll(".image-with-location")
+      );
       if (imageDivs.length > 0) {
-        // Create a single grid wrapper div
-        const gridWrapper = printWindow.document.createElement('div');
-        gridWrapper.className = 'images-grid';
-        
-        // Move each image div into the grid wrapper
-        imageDivs.forEach(div => {
-          gridWrapper.appendChild(div);
-        });
-        
-        // Replace the cell's content with the grid wrapper
-        imagesCell.innerHTML = '';
+        const gridWrapper = printWindow.document.createElement("div");
+        gridWrapper.className = "images-grid";
+        imageDivs.forEach((div) => gridWrapper.appendChild(div));
+        imagesCell.innerHTML = "";
         imagesCell.appendChild(gridWrapper);
       }
-    }
-    
-    // Create section wrapper
-    const sectionWrapper = printWindow.document.createElement("div");
-    sectionWrapper.className = "section";
-    if (index > 0) {
-      sectionWrapper.style.marginTop = "30px";
-    }
-    
-    // Add section title
-    const title = printWindow.document.createElement("h2");
-    title.className = "section-title";
-    title.textContent = `Location ${index + 1}`;
-    sectionWrapper.appendChild(title);
-    
-    // Move the table into the section wrapper
-    table.parentNode.insertBefore(sectionWrapper, table);
+    });
+
+    // Optional: Sub-title for each table
+    const locTitle = printWindow.document.createElement("h3");
+    locTitle.className = "section-title";
+    locTitle.textContent = `Location ${index + 1}`;
+    sectionWrapper.appendChild(locTitle);
+
     sectionWrapper.appendChild(table);
   });
 
-  // Add the processed content to the print window
-  printContent.appendChild(contentClone);
+  printContent.appendChild(sectionWrapper);
 
-  // Wait for resources to load
   await new Promise((resolve) => {
     if (printWindow.document.readyState === "complete") {
       resolve();
@@ -1062,7 +890,6 @@ async function generatePDFNow(element) {
     }
   });
 
-  // Print with delay
   setTimeout(() => {
     printWindow.print();
     setTimeout(() => printWindow.close(), 1000);
