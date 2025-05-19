@@ -227,6 +227,7 @@ body {
 
 #featureTable td.label {
   font-weight: 500;
+  font-weight: bold;
   color: var(--dark-color);
   width: 25%;
 }
