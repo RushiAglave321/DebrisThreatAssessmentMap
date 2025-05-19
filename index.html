@@ -124,7 +124,7 @@
 
             <!-- Download Button -->
             <div class="control-section text-center">
-              <button type="button" onclick="generatePDF()" class="download-btn">
+              <button type="button" id="downloadPDFBtn" class="download-btn">
                 <i class="fas fa-file-pdf"></i> Download as PDF
               </button>
             </div>
@@ -161,8 +161,9 @@
                     <td class="value" id="locationCell">-</td>
                   </tr>
                   <tr>
-                    <td class="label">Images:</td>
-                    <td class="value images-cell">
+                    <!-- <td class="label">Images:</td> -->
+                    <td class="value images-cell" colspan="2">
+                      <strong>Images:</strong><br />
                       <img id="debrisImage" src="" alt="Click on a feature to view the debris image."
                         class="img-fluid mx-auto d-block avoid-break" />
                     </td>
@@ -209,7 +210,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://js.arcgis.com/4.27/"></script>
 
-  <script src="main.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 
 </html>
