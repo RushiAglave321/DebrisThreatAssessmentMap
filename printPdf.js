@@ -1,4 +1,4 @@
-export async  function generatePDF() {
+export async function generatePDF() {
   const container = document.getElementById("tableContainer");
 
   // Create a clone of the content to preserve original styling
@@ -34,6 +34,7 @@ async function generatePDFNow(element) {
   const formattedDate = `${now.getDate()}/${
     now.getMonth() + 1
   }/${now.getFullYear()}`;
+
   const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
     2,
     "0"
@@ -231,9 +232,29 @@ async function generatePDFNow(element) {
     });
 
     // Optional: Sub-title for each table
+    // const locTitle = printWindow.document.createElement("h3");
+    // locTitle.className = "section-title";
+    // locTitle.textContent = `Location ${index + 1}`;
+    // sectionWrapper.appendChild(locTitle);
+    let countyName = `Location ${index + 1}`; // fallback
+    const rows = table.querySelectorAll("tr");
+    rows.forEach((row) => {
+      const label = row.querySelector(".label");
+      const value = row.querySelector(".value");
+      if (
+        label &&
+        value &&
+        label.textContent.trim().toLowerCase() === "county:"
+      ) {
+        countyName = value.textContent.trim();
+        row.remove();
+
+      }
+    });
+
     const locTitle = printWindow.document.createElement("h3");
     locTitle.className = "section-title";
-    locTitle.textContent = `Location ${index + 1}`;
+    locTitle.textContent = `County: ${countyName}`;
     sectionWrapper.appendChild(locTitle);
 
     sectionWrapper.appendChild(table);
@@ -245,7 +266,6 @@ async function generatePDFNow(element) {
     if (printWindow.document.readyState === "complete") {
       resolve();
     } else {
-      // printWindow.addEventListener("load", resolve);
       printWindow.onload = resolve;
     }
   });
