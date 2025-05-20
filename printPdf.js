@@ -31,9 +31,9 @@ async function generatePDFNow(element) {
   if (!printWindow) throw new Error("Popup blocked. Please allow popups.");
 
   const now = new Date();
-  const formattedDate = `${now.getDate()}/${
+  const formattedDate = `${
     now.getMonth() + 1
-  }/${now.getFullYear()}`;
+  }/${now.getDate()}/${now.getFullYear()}`;
 
   const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
     2,
@@ -177,13 +177,13 @@ async function generatePDFNow(element) {
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Debris Threats Report</title>
+        <title>Debris Threat Assessment</title>
         ${printStyles}
       </head>
       <body>
         <div class="report-container">
           <div class="report-header">
-            <h1 class="report-title">Debris Threats Report</h1>
+            <h1 class="report-title">Debris Threat Assessment</h1>
             <p class="report-subtitle">Generated on ${formattedDate} at ${formattedTime}</p>
           </div>
           <div id="print-content"></div>

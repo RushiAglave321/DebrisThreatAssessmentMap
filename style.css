@@ -278,6 +278,7 @@ body {
     width: 300px;
     position: absolute;
     height: 100%;
+    overflow: auto;
   }
 
   .sidebar-collapsed {
@@ -425,5 +426,48 @@ img {
 .image-with-location {
   margin-bottom: 15px;
 }
+
+.dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-zindex {
+  z-index: 1050 !important; /* Bootstrap modal is 1050+, so this ensures visibility */
+  /* position: absolute !important; */
+}
+
+#impactDropdownContainer {
+  /* position: absolute; or absolute if you want it within a parent */
+  top: 100px;       /* adjust to position it where you want */
+  left: 20px;       /* adjust based on sidebar or screen */
+  z-index: 9999;    /* ensure it's on top */
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.dropdown-toggle{
+  background-color: var(--primary-color);
+  color: white;
+  border-color:#21867a;
+  width:100%
+}
+.dropdown-toggle:hover{
+  background-color: #21867a;
+}
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active{
+  background-color: #21867a;
+}
+
+.form-check{
+  margin-bottom: 10px;
+}
+
+
+
+
 
  

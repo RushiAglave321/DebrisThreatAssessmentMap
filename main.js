@@ -120,6 +120,18 @@ require([
     outFields: ["*"],
     title: "Ticket Data",
     visible: false,
+    renderer: {
+      type: "simple", // SimpleRenderer
+      symbol: {
+        type: "simple-marker", // For points
+        color: "purple", // Fill color
+        size: 8, // Size of the marker
+        outline: {
+          color: "white", // Outline color
+          width: 1, // Outline width
+        },
+      },
+    },
   });
 
   //clint setup web map 8 layers
@@ -215,6 +227,7 @@ require([
     outFields: ["*"],
     title: "Work Area",
     visible: true,
+    opacity: 0.3,
   });
 
   // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
@@ -284,12 +297,12 @@ require([
     Contamination_and_Environmental_Health_Threats_FULL,
     Life_Safety_and_Emergency_Response_Zone_Threats_FULL,
     County_Layer,
-    THREATS_Protected_Lands_Threat_Basic,
-    THREATS_Critical_Habitat_Threat_Basic,
-    THREATS_Navigable_Waterway_Threat_Basic,
-    THREATS_Infrastructure_Damage_Threat_Basic,
-    THREATS_Flood_Mitigation_Threats_Basic,
-    THREATS_Public_Safety_Threats_Basic,
+    // THREATS_Protected_Lands_Threat_Basic,
+    // THREATS_Critical_Habitat_Threat_Basic,
+    // THREATS_Navigable_Waterway_Threat_Basic,
+    // THREATS_Infrastructure_Damage_Threat_Basic,
+    // THREATS_Flood_Mitigation_Threats_Basic,
+    // THREATS_Public_Safety_Threats_Basic,
     Work_Layer,
     ticketData,
     featureLayer,
