@@ -68,40 +68,79 @@
                       <i class="fas fa-exclamation-triangle"></i>
                       <span style="font-size: 15px; font-weight: bold">Impact Fields</span>
                     </div>
-                    <div class="impact-checkbox">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Public Safety" id="impact1">
-                            <label class="form-check-label" for="impact1">Public Safety</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Contamination" id="impact2">
-                            <label class="form-check-label" for="impact2">Contamination</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Infrastructure Damage Prevention"
-                              id="impact3">
-                            <label class="form-check-label" for="impact3">Infrastructure Damage Prevention</label>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Flood Risk Mitigation" id="impact4">
-                            <label class="form-check-label" for="impact4">Flood Risk Mitigation</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Critical Habitat" id="impact5">
-                            <label class="form-check-label" for="impact5">Critical Habitat/Protected Lands</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="Not a Threat" id="impact6">
-                            <label class="form-check-label" for="impact6">Not a Threat</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
 
+                    <!-- trying new impact widget -->
+                    <div id="impactDropdownContainer">
+                      
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="impactDropdown"
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                          Select Impact Types
+                        </button>
+                        <ul class="dropdown-menu p-3 dropdown-zindex" style="width: 410px;"
+                          aria-labelledby="impactDropdown">
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Immediate threat to life, public health, or safety" id="impact1">
+                              <label class="form-check-label" for="impact1">Immediate threat to life, public health, or
+                                safety</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Immediate threat to improved public or private property" id="impact2">
+                              <label class="form-check-label" for="impact2">Immediate threat to improved public or
+                                private
+                                property</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Obstruction to vessel passage in an eligible navigable waterway" id="impact3">
+                              <label class="form-check-label" for="impact3">Obstruction to vessel passage in an eligible
+                                navigable waterway</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Submerged or floating debris threatening navigation or embankment stability"
+                                id="impact4">
+                              <label class="form-check-label" for="impact4">Submerged or floating debris threatening
+                                navigation or embankment stability</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="Obstruction to intake structures"
+                                id="impact5">
+                              <label class="form-check-label" for="impact5">Obstruction to intake structures</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Risk of structural damage to bridges, culverts, or other infrastructure"
+                                id="impact6">
+                              <label class="form-check-label" for="impact6">Risk of structural damage to bridges,
+                                culverts, or other infrastructure</label>
+                            </div>
+                          </li>
+                          <li>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox"
+                                value="Increased flooding risk to improved property during a 5-year flood event"
+                                id="impact7">
+                              <label class="form-check-label" for="impact7">Increased flooding risk to improved property
+                                during a 5-year flood event</label>
+                            </div>
+                          </li>
+                        </ul>
+                      
+                    </div>
+                    <!-- trying new impact widget -->
                     <!-- adding notes widget -->
                     <div id="notesPanel" class="hidden">
                       <div class="notesTitle">
@@ -131,7 +170,8 @@
 
             <!-- attribute table  -->
             <div class="control-section" style="margin-top: 15px;">
-              <div class="section-title" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div class="section-title"
+                style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <div style="display: flex; align-items: center;">
                   <i class="fas fa-table"></i>
                   <span style="font-weight: bold; margin-left: 15px;">Feature Details</span>
