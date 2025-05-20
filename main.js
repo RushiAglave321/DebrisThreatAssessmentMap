@@ -217,15 +217,78 @@ require([
     visible: true,
   });
 
+  // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
+  let Life_Safety_and_Emergency_Response_Zone_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Life_Safety_and_Emergency_Response_Zone_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Life Safety and Emergency Response Zone Threats FULL",
+    visible: false,
+  });
+  let Contamination_and_Environmental_Health_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Contamination_and_Environmental_Health_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Contamination and Environmental Health Threats FULL",
+    visible: false,
+  });
+  let Damage_Prone_Critical_Infrastructure_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Damage_Prone_Critical_Infrastructure_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Damage Prone Critical Infrastructure FULL",
+    visible: false,
+  });
+  let Flood_Risk_Mitigation_Zones_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Flood_Risk_Mitigation_Zones_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Flood Risk Mitigation Zones Threats FULL",
+    visible: false,
+  });
+  //   let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS FM dfirm fldhaz 100_500Yr",
+  //   visible: false,
+  // });
+  //   let THREATS_PS_StormSurge = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS_PS_StormSurge",
+  //   visible: false,
+  // });
+  let Navigable_Waterway_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Navigable_Waterway_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Navigable Waterway Threats FULL",
+    visible: false,
+  });
+  let Environmental_and_Historic_Preservation_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Environmental_and_Historic_Preservation_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Environmental and Historic Preservation Threats FULL",
+    visible: false,
+  });
+  let Eq_Vulnerability_Threats_FULL = new FeatureLayer({
+    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Eq_Vulnerability_Threats_FULL/FeatureServer/0",
+    outFields: ["*"],
+    title: "Eq Vulnerability Threats FULL",
+    visible: false,
+  });
+
   map.addMany([
+    Eq_Vulnerability_Threats_FULL,
+    Environmental_and_Historic_Preservation_Threats_FULL,
+    Navigable_Waterway_Threats_FULL,
+    THREATS_PS_StormSurge,
+    THREATS_FM_dfirm_fldhaz_100_500Yr,
+    Flood_Risk_Mitigation_Zones_Threats_FULL,
+    Damage_Prone_Critical_Infrastructure_FULL,
+    Contamination_and_Environmental_Health_Threats_FULL,
+    Life_Safety_and_Emergency_Response_Zone_Threats_FULL,
     County_Layer,
     THREATS_Protected_Lands_Threat_Basic,
     THREATS_Critical_Habitat_Threat_Basic,
     THREATS_Navigable_Waterway_Threat_Basic,
     THREATS_Infrastructure_Damage_Threat_Basic,
-    THREATS_FM_dfirm_fldhaz_100_500Yr,
     THREATS_Flood_Mitigation_Threats_Basic,
-    THREATS_PS_StormSurge,
     THREATS_Public_Safety_Threats_Basic,
     Work_Layer,
     ticketData,
@@ -684,7 +747,9 @@ import { generatePDF } from "./printPdf.js";
 
 //-------------------------------printing pdf----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("downloadPDFBtn").addEventListener("click", () => {
+  const button = document
+    .getElementById("downloadPDFBtn")
+    .addEventListener("click", () => {
       generatePDF();
     });
 });
