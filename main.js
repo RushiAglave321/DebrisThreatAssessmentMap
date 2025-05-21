@@ -1,3 +1,7 @@
+//---------------All Import section---------------------------------------------------------
+import { generatePDF } from "./printPdf.js";
+import { setupPopup } from './popupHandler.js';
+
 require([
   "esri/Map",
   "esri/views/MapView",
@@ -135,54 +139,54 @@ require([
   });
 
   //clint setup web map 8 layers
-  let THREATS_Public_Safety_Threats_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Public_Safety_Threats_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Public Safety Threats Basic",
-    visible: false,
-  });
+  // let THREATS_Public_Safety_Threats_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Public_Safety_Threats_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Public Safety Threats Basic",
+  //   visible: false,
+  // });
   let THREATS_PS_StormSurge = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
     outFields: ["*"],
     title: "THREATS PS StormSurge",
     visible: false,
   });
-  let THREATS_Flood_Mitigation_Threats_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Flood_Mitigation_Threats_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Flood Mitigation Threats Basic",
-    visible: false,
-  });
+  // let THREATS_Flood_Mitigation_Threats_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Flood_Mitigation_Threats_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Flood Mitigation Threats Basic",
+  //   visible: false,
+  // });
   let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
     outFields: ["*"],
     title: "THREATS FM dfirm fldhaz 100 500Yr",
     visible: false,
   });
-  let THREATS_Infrastructure_Damage_Threat_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Infrastructure_Damage_Threat_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Infrastructure Damage Threat Basic",
-    visible: false,
-  });
-  let THREATS_Navigable_Waterway_Threat_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Navigable_Waterway_Threat_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Navigable Waterway Threat Basic",
-    visible: false,
-  });
-  let THREATS_Critical_Habitat_Threat_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Critical_Habitat_Threat_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Critical Habitat Threat Basic",
-    visible: false,
-  });
-  let THREATS_Protected_Lands_Threat_Basic = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Protected_Lands_Threat_Basic/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS Protected Lands Threat Basic",
-    visible: false,
-  });
+  // let THREATS_Infrastructure_Damage_Threat_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Infrastructure_Damage_Threat_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Infrastructure Damage Threat Basic",
+  //   visible: false,
+  // });
+  // let THREATS_Navigable_Waterway_Threat_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Navigable_Waterway_Threat_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Navigable Waterway Threat Basic",
+  //   visible: false,
+  // });
+  // let THREATS_Critical_Habitat_Threat_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Critical_Habitat_Threat_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Critical Habitat Threat Basic",
+  //   visible: false,
+  // });
+  // let THREATS_Protected_Lands_Threat_Basic = new FeatureLayer({
+  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Protected_Lands_Threat_Basic/FeatureServer/0",
+  //   outFields: ["*"],
+  //   title: "THREATS Protected Lands Threat Basic",
+  //   visible: false,
+  // });
   let County_Layer = new FeatureLayer({
     url: "https://ocean.floridamarine.org/arcgis/rest/services/FWC_GIS/MRGIS_Boundaries/FeatureServer/36",
     outFields: ["*"],
@@ -308,87 +312,10 @@ require([
     featureLayer,
   ]);
 
-  //popup configured
-  view.on("click", function (event) {
-    view.hitTest(event).then(function (response) {
-      const results = response.results;
+  //-----------popup configuration function----------------
+  setupPopup(view);
+  //----------popup configuration function------------------
 
-      // Filter only graphics from FeatureLayers
-      const graphics = results.filter(
-        (result) =>
-          result.graphic.layer && result.graphic.layer.type === "feature"
-      );
-
-      if (graphics.length > 0) {
-        // Create a popup content string for all features under the click
-        let popupContent = "";
-        const orderedFields = [
-          "COUNTY",
-          "Work_Area_Name",
-          "Impact",
-          "location",
-          "image_name",
-          "image_url",
-          "notes",
-        ];
-        const hiddenFields = [
-          "fid",
-          "lat",
-          "lon",
-          "CreationDate",
-          "Creator",
-          "EditDate",
-          "Editor",
-          "GlobalID",
-        ]; // fields you want to hide
-
-        graphics.forEach((result, index) => {
-          const attrs = result.graphic.attributes;
-          popupContent += `<b>Layer ${index + 1} - ${
-            result.graphic.layer.title
-          }</b><br>`;
-
-          if (index === 0) {
-            // Show attributes in defined order for first layer
-            orderedFields.forEach((key) => {
-              if (attrs[key] !== undefined) {
-                if (key === "image_url" && attrs[key]) {
-                  popupContent += `<b>Image:</b><br><img src="${attrs[key]}" style="max-width:300px;"><br>`;
-                } else {
-                  popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
-                }
-              }
-            });
-          } else {
-            // For other layers, show all attributes except hidden ones
-            for (const key in attrs) {
-              if (!hiddenFields.includes(key)) {
-                popupContent += `<b>${key}:</b> ${attrs[key]}<br>`;
-              }
-            }
-          }
-
-          popupContent += "<hr>";
-        });
-
-        // Show popup
-        view.popup.open({
-          title: `Found ${graphics.length} feature(s)`,
-          content: popupContent,
-          location: event.mapPoint,
-        });
-      } else {
-        // Optional fallback if no features were clicked
-        view.popup.open({
-          title: "No features here",
-          content: `Coordinates:<br>Lat: ${event.mapPoint.latitude.toFixed(
-            4
-          )}, Lon: ${event.mapPoint.longitude.toFixed(4)}`,
-          location: event.mapPoint,
-        });
-      }
-    });
-  });
 
   // ------------------selection--------------------------------
   let highlight; // to store the current highlight
@@ -648,7 +575,7 @@ require([
           countyTable.appendChild(notesRow);
 
           // Adding lat long to feature table
-          const location = features.map((item) => item.location);
+          // const location = features.map((item) => item.location);
 
           // Create images row
           const imagesRow = document.createElement("tr");
@@ -656,9 +583,12 @@ require([
             .map((item) => {
               if (item.image_url) {
                 const cleanLocation = item.location.replace(/[()]/g, "");
+                const [lat, lon] = cleanLocation
+                  .split(",")
+                  .map((coord) => Number(parseFloat(coord).toFixed(6)));
                 return `
                   <div class="image-with-location">
-                    <div class="location-info">${cleanLocation}</div>
+                    <div class="location-info" style="text-align: center;">${lat},${" "}${lon}</div>
                     <img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />
                   </div>
                 `;
@@ -753,10 +683,20 @@ require([
   view.whenLayerView(featureLayer).then((layerView) => {
     featureLayer.queryExtent().then((response) => view.goTo(response.extent));
   });
+
+  //---------------Print map ----------------------
+document.getElementById("takeScreenshot").addEventListener("change", function () {
+        if (this.checked) {
+          view.takeScreenshot().then(function(screenshot) {
+            document.getElementById("screenshotImage").src = screenshot.dataUrl;
+            this.checked = false; // uncheck after taking screenshot
+          }.bind(this));
+        }
+      });
+      
 });
 
-//---------------All Import section---------------------------------------------------------
-import { generatePDF } from "./printPdf.js";
+
 
 //-------------------------------printing pdf----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
@@ -766,6 +706,8 @@ document.addEventListener("DOMContentLoaded", () => {
       generatePDF();
     });
 });
+
+
 
 const toggleBtn = document.getElementById("toggleSidebar");
 const toggleBtnMap = document.getElementById("toggleSidebarMap");

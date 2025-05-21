@@ -140,6 +140,7 @@ async function generatePDFNow(element) {
         border-radius: 3px;
         font-size: 10px;
         margin-bottom: 5px;
+        text-align: centre; !important
       }
 
       .images-grid {
