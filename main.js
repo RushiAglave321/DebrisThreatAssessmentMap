@@ -1,6 +1,6 @@
 //---------------All Import section---------------------------------------------------------
 import { generatePDF } from "./printPdf.js";
-import { setupPopup } from './popupHandler.js';
+import { setupPopup } from "./popupHandler.js";
 
 require([
   "esri/Map",
@@ -58,13 +58,13 @@ require([
     position: "bottom-left",
   });
 
+  //--------------------------------------------*feature Layers*-----------------------------------------------
   //Graphic layer for selection
   const graphicsLayer = new GraphicsLayer({
     title: "Selected Features",
   });
   map.add(graphicsLayer);
-
-  //render arcade expression for filtering null and not null value for symbology
+  //render arcade expression for filtering null and not null value for symbology in feature layer
   const renderer = {
     type: "unique-value",
     valueExpression: `
@@ -109,16 +109,12 @@ require([
       },
     ],
   };
-
   let featureLayer = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0",
     outFields: ["*"],
     title: "Debris - AshBritt",
     renderer: renderer,
   });
-
-  // map.add(featureLayer);
-
   let ticketData = new FeatureLayer({
     url: "https://gis.cdrmaguire.com/arcgis/rest/services/DBO_DR4828FL_Waterway_Barge_Tickets_Public_Facing/FeatureServer/44",
     outFields: ["*"],
@@ -137,56 +133,19 @@ require([
       },
     },
   });
-
   //clint setup web map 8 layers
-  // let THREATS_Public_Safety_Threats_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Public_Safety_Threats_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Public Safety Threats Basic",
-  //   visible: false,
-  // });
   let THREATS_PS_StormSurge = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
     outFields: ["*"],
     title: "THREATS PS StormSurge",
     visible: false,
   });
-  // let THREATS_Flood_Mitigation_Threats_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Flood_Mitigation_Threats_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Flood Mitigation Threats Basic",
-  //   visible: false,
-  // });
   let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
     outFields: ["*"],
     title: "THREATS FM dfirm fldhaz 100 500Yr",
     visible: false,
   });
-  // let THREATS_Infrastructure_Damage_Threat_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Infrastructure_Damage_Threat_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Infrastructure Damage Threat Basic",
-  //   visible: false,
-  // });
-  // let THREATS_Navigable_Waterway_Threat_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Navigable_Waterway_Threat_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Navigable Waterway Threat Basic",
-  //   visible: false,
-  // });
-  // let THREATS_Critical_Habitat_Threat_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Critical_Habitat_Threat_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Critical Habitat Threat Basic",
-  //   visible: false,
-  // });
-  // let THREATS_Protected_Lands_Threat_Basic = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_Protected_Lands_Threat_Basic/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS Protected Lands Threat Basic",
-  //   visible: false,
-  // });
   let County_Layer = new FeatureLayer({
     url: "https://ocean.floridamarine.org/arcgis/rest/services/FWC_GIS/MRGIS_Boundaries/FeatureServer/36",
     outFields: ["*"],
@@ -233,7 +192,6 @@ require([
     visible: true,
     opacity: 0.3,
   });
-
   // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
   let Life_Safety_and_Emergency_Response_Zone_Threats_FULL = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Life_Safety_and_Emergency_Response_Zone_Threats_FULL/FeatureServer/0",
@@ -259,18 +217,6 @@ require([
     title: "Flood Risk Mitigation Zones Threats FULL",
     visible: false,
   });
-  //   let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS FM dfirm fldhaz 100_500Yr",
-  //   visible: false,
-  // });
-  //   let THREATS_PS_StormSurge = new FeatureLayer({
-  //   url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
-  //   outFields: ["*"],
-  //   title: "THREATS_PS_StormSurge",
-  //   visible: false,
-  // });
   let Navigable_Waterway_Threats_FULL = new FeatureLayer({
     url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Navigable_Waterway_Threats_FULL/FeatureServer/0",
     outFields: ["*"],
@@ -290,6 +236,7 @@ require([
     visible: false,
   });
 
+  //Add Your layers to the map
   map.addMany([
     Eq_Vulnerability_Threats_FULL,
     Environmental_and_Historic_Preservation_Threats_FULL,
@@ -301,21 +248,15 @@ require([
     Contamination_and_Environmental_Health_Threats_FULL,
     Life_Safety_and_Emergency_Response_Zone_Threats_FULL,
     County_Layer,
-    // THREATS_Protected_Lands_Threat_Basic,
-    // THREATS_Critical_Habitat_Threat_Basic,
-    // THREATS_Navigable_Waterway_Threat_Basic,
-    // THREATS_Infrastructure_Damage_Threat_Basic,
-    // THREATS_Flood_Mitigation_Threats_Basic,
-    // THREATS_Public_Safety_Threats_Basic,
     Work_Layer,
     ticketData,
     featureLayer,
   ]);
+  //--------------------------------------------*feature Layers*-----------------------------------------------
 
   //-----------popup configuration function----------------
   setupPopup(view);
   //----------popup configuration function------------------
-
 
   // ------------------selection--------------------------------
   let highlight; // to store the current highlight
@@ -496,7 +437,7 @@ require([
         );
       });
 
-      //---------------Table-----------------------------
+      //---------------Table----------------------------
 
       const container = document.getElementById("tableContainer");
       container.innerHTML = ""; // Clear before adding new tables
@@ -589,7 +530,9 @@ require([
                 return `
                   <div class="image-with-location">
                     <div class="location-info" style="text-align: center;">${lat},${" "}${lon}</div>
-                    <img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url}" alt="Feature Image" />
+                    <img class="img-fluid mx-auto d-block avoid-break" src="${
+                      item.image_url
+                    }" alt="Feature Image" />
                   </div>
                 `;
               }
@@ -609,10 +552,64 @@ require([
       }
     }
 
+    // sketch.on("create", async (event) => {
+    //   if (event.state === "complete") {
+    //     // console.log("Polygon geometry:", event.graphic.geometry); // Add this
+
+    //     const query = featureLayer.createQuery();
+    //     query.geometry = event.graphic.geometry;
+    //     query.spatialRelationship = "intersects";
+    //     query.returnGeometry = true;
+    //     query.outFields = ["*"];
+
+    //     const result = await featureLayer.queryFeatures(query);
+
+    //     selectedFeatures = result.features;
+    //     graphicsLayer.removeAll();
+
+    //     highlightSelection();
+    //     updateUI();
+
+    //     document
+    //       .getElementById("updateBtn")
+    //       .addEventListener("click", async () => {
+    //         const checkboxes = document.querySelectorAll(
+    //           "#impactFields input[type='checkbox']:checked"
+    //         );
+
+    //         const notes = document.getElementById("notesText").value;
+
+    //         if (checkboxes.length > 0) {
+    //           const selectedValues = Array.from(checkboxes).map(
+    //             (cb) => cb.value
+    //           );
+
+    //           for (let feature of selectedFeatures) {
+    //             feature.attributes.Impact = selectedValues.join(", ");
+    //           }
+    //         }
+
+    //         if (notes) {
+    //           for (let feature of selectedFeatures) {
+    //             feature.attributes.notes = notes;
+    //           }
+    //         }
+    //         const edits = await featureLayer.applyEdits({
+    //           updateFeatures: selectedFeatures,
+    //         });
+
+    //         if (edits.updateFeatureResults.length > 0) {
+    //           alert("Updated successfully!");
+    //         } else {
+    //           alert("No updates were made.");
+    //         }
+    //       });
+    //   }
+    // });
+
+
     sketch.on("create", async (event) => {
       if (event.state === "complete") {
-        // console.log("Polygon geometry:", event.graphic.geometry); // Add this
-
         const query = featureLayer.createQuery();
         query.geometry = event.graphic.geometry;
         query.spatialRelationship = "intersects";
@@ -626,41 +623,40 @@ require([
 
         highlightSelection();
         updateUI();
+      }
+    });
 
-        document
-          .getElementById("updateBtn")
-          .addEventListener("click", async () => {
-            const checkboxes = document.querySelectorAll(
-              "#impactFields input[type='checkbox']:checked"
-            );
+    // ✅ Attach this once, outside the sketch.on block
+    document.getElementById("updateBtn").addEventListener("click", async () => {
+      if (!selectedFeatures || selectedFeatures.length === 0) {
+        alert("No features selected.");
+        return;
+      }
 
-            const notes = document.getElementById("notesText").value;
+      const checkboxes = document.querySelectorAll(
+        "#impactFields input[type='checkbox']:checked"
+      );
+      const notes = document.getElementById("notesText").value;
 
-            if (checkboxes.length > 0) {
-              const selectedValues = Array.from(checkboxes).map(
-                (cb) => cb.value
-              );
+      const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
 
-              for (let feature of selectedFeatures) {
-                feature.attributes.Impact = selectedValues.join(", ");
-              }
-            }
+      for (let feature of selectedFeatures) {
+        if (selectedValues.length > 0) {
+          feature.attributes.Impact = selectedValues.join(", ");
+        }
+        if (notes) {
+          feature.attributes.notes = notes;
+        }
+      }
 
-            if (notes) {
-              for (let feature of selectedFeatures) {
-                feature.attributes.notes = notes;
-              }
-            }
-            const edits = await featureLayer.applyEdits({
-              updateFeatures: selectedFeatures,
-            });
+      const edits = await featureLayer.applyEdits({
+        updateFeatures: selectedFeatures,
+      });
 
-            if (edits.updateFeatureResults.length > 0) {
-              alert("Updated successfully!");
-            } else {
-              alert("No updates were made.");
-            }
-          });
+      if (edits.updateFeatureResults.length > 0) {
+        alert("Updated successfully!");
+      } else {
+        alert("No updates were made.");
       }
     });
 
@@ -685,18 +681,19 @@ require([
   });
 
   //---------------Print map ----------------------
-document.getElementById("takeScreenshot").addEventListener("change", function () {
-        if (this.checked) {
-          view.takeScreenshot().then(function(screenshot) {
+  document
+    .getElementById("takeScreenshot")
+    .addEventListener("change", function () {
+      if (this.checked) {
+        view.takeScreenshot().then(
+          function (screenshot) {
             document.getElementById("screenshotImage").src = screenshot.dataUrl;
             this.checked = false; // uncheck after taking screenshot
-          }.bind(this));
-        }
-      });
-      
+          }.bind(this)
+        );
+      }
+    });
 });
-
-
 
 //-------------------------------printing pdf----------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
@@ -706,8 +703,6 @@ document.addEventListener("DOMContentLoaded", () => {
       generatePDF();
     });
 });
-
-
 
 const toggleBtn = document.getElementById("toggleSidebar");
 const toggleBtnMap = document.getElementById("toggleSidebarMap");
