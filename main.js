@@ -494,15 +494,77 @@ require([
           countyTable.appendChild(areaRow);
 
           // Create threats row
-          const threatSet = new Set(features.map((item) => item.threat));
-          const threats = [...threatSet].join(", ");
+          //       const threatSet = new Set(features.map((item) => item.threat));
+          //       const threats = [...threatSet].join(", ");
 
+          //       const threatsRow = document.createElement("tr");
+          //       threatsRow.innerHTML = `
+          //   <td class="label">Threats:</td>
+          //   <td class="value" id="threatsCell">${threats}</td>
+          // `;
+          //       countyTable.appendChild(threatsRow);
+
+          //creating threats by bullets
+          //   const threatSet = new Set(features.map((item) => item.threat));
+          //   const threats = [...threatSet];
+
+          //   // Create a list of threats as bullet points
+          //   const threatList = threats
+          //     .map((threat) => `<li>${threat}</li>`)
+          //     .join("");
+
+          //   const threatsRow = document.createElement("tr");
+          //   threatsRow.innerHTML = `
+          //   <td class="label">Threats:</td>
+          //   <td class="value" id="threatsCell">
+          //     <ul style="margin: 0; padding-left: 20px;">${threatList}</ul>
+          //   </td>
+          // `;
+          //   countyTable.appendChild(threatsRow);
+
+          //-------------------threats trying-----------------------
+          // Step 1: Define known threat types
+          const knownThreats = [
+            "Immediate threat to life, public health, or safety",
+            "Immediate threat to improved public or private property",
+            "Obstruction to vessel passage in an eligible navigable waterway",
+            "Submerged or floating debris threatening navigation or embankment stability",
+            "Obstruction to intake structures",
+            "Risk of structural damage to bridges, culverts, or other infrastructure",
+            "Increased flooding risk to improved property during a 5-year flood even",
+            "To Be Removed",
+            // Add more known types if needed
+          ];
+
+          // Step 2: Extract all threats that match known types
+          const matchedThreats = new Set();
+
+          features.forEach((item) => {
+            if (!item.threat || item.threat === "N/A") return;
+
+            knownThreats.forEach((threatType) => {
+              if (item.threat.includes(threatType)) {
+                matchedThreats.add(threatType);
+              }
+            });
+          });
+
+          // Step 3: Convert to list items
+          const threatList = [...matchedThreats]
+            .map((threat) => `<li>${threat}</li>`)
+            .join("");
+
+          // Step 4: Inject into the table
           const threatsRow = document.createElement("tr");
           threatsRow.innerHTML = `
-      <td class="label">Threats:</td>
-      <td class="value" id="threatsCell">${threats}</td>
-    `;
+          <td class="label">Threats:</td>
+          <td class="value" id="threatsCell">
+            <ul style="margin: 0; padding-left: 20px;">${threatList}</ul>
+          </td>
+        `;
           countyTable.appendChild(threatsRow);
+
+          //-------------------threats trying-----------------------
 
           // Create Notes row
           const notesSet = new Set(features.map((item) => item.notes));
@@ -606,7 +668,6 @@ require([
     //       });
     //   }
     // });
-
 
     sketch.on("create", async (event) => {
       if (event.state === "complete") {
