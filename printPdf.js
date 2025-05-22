@@ -52,19 +52,6 @@ async function generatePDFNow(element) {
           font-family: Arial, sans-serif;
           color: #555;
         }
-
-        // @top-left {
-        //   content: "Debris Threats Report";
-        //   font-size: 10pt;
-        //   font-family: Arial, sans-serif;
-        //   font-weight: bold;
-        // }
-
-        // @top-right {
-        //   content: "${formattedDate}, ${formattedTime}";
-        //   font-size: 10pt;
-        //   font-family: Arial, sans-serif;
-        // }
       }
 
       body {
@@ -171,6 +158,7 @@ async function generatePDFNow(element) {
           display: none;
         }
       }
+
     </style>
   `;
 
@@ -249,7 +237,6 @@ async function generatePDFNow(element) {
       ) {
         countyName = value.textContent.trim();
         row.remove();
-
       }
     });
 
@@ -259,6 +246,7 @@ async function generatePDFNow(element) {
     sectionWrapper.appendChild(locTitle);
 
     sectionWrapper.appendChild(table);
+    
   });
 
   printContent.appendChild(sectionWrapper);
