@@ -64,7 +64,9 @@ require([
     title: "Selected Features",
   });
   map.add(graphicsLayer);
+
   //render arcade expression for filtering null and not null value for symbology in feature layer
+  //legend are configured from this
   const renderer = {
     type: "unique-value",
     valueExpression: `
