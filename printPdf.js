@@ -1,14 +1,12 @@
 export async function generatePDF() {
   const container = document.getElementById("tableContainer");
-  const element = container.cloneNode(true);
 
-  // Store original styles
+  const element = container.cloneNode(true);
   const originalStyles = {
     maxHeight: container.style.maxHeight,
     overflow: container.style.overflow,
   };
 
-  // Temporarily modify styles for printing
   container.style.maxHeight = "none";
   container.style.overflow = "visible";
 
@@ -18,7 +16,6 @@ export async function generatePDF() {
     console.error("Printing failed:", error);
     alert("Failed to generate PDF. Please try again.");
   } finally {
-    // Restore original styles
     container.style.maxHeight = originalStyles.maxHeight;
     container.style.overflow = originalStyles.overflow;
   }
@@ -37,12 +34,133 @@ async function generatePDFNow(element) {
     "0"
   )}:${String(now.getSeconds()).padStart(2, "0")}`;
 
+  // const printStyles = `
+  //   <style>
+  //     @page {
+  //       size: A4;
+  //       margin: 1.5cm 1cm 2cm 1cm;
+  //       @bottom-center {
+  //         content: "Page " counter(page) " of " counter(pages);
+  //         font-size: 9pt;
+  //         font-family: Arial, sans-serif;
+  //         color: #555;
+  //       }
+  //     }
+  //     body {
+  //       font-family: Arial, sans-serif;
+  //       line-height: 1.5;
+  //       color: #333;
+  //       margin: 0;
+  //       padding: 0;
+  //     }
+  //     .report-container {
+  //       padding: 20px;
+  //     }
+  //     .report-header {
+  //       margin-bottom: 20px;
+  //       border-bottom: 2px solid #0066cc;
+  //       padding-bottom: 10px;
+  //     }
+  //     .report-title {
+  //       font-size: 18pt;
+  //       color: #0066cc;
+  //       margin: 0 0 5px 0;
+  //     }
+  //     .report-subtitle {
+  //       font-size: 12pt;
+  //       color: #666;
+  //       margin: 0;
+  //     }
+  //     .section {
+  //       margin: 0;
+  //       page-break-inside: auto;
+  //       page-break-before: auto;
+  //       page-break-after: auto;
+  //     }
+  //     .section-title {
+  //       font-size: 14pt;
+  //       color: #0066cc;
+  //       margin: 10px 0;
+  //       padding-bottom: 5px;
+  //       border-bottom: 1px solid #ddd;
+  //     }
+  //     .featureTable {
+  //       width: 100%;
+  //       border-collapse: collapse;
+  //       margin-bottom: 15px;
+  //       page-break-inside: avoid;
+  //     }
+  //     .featureTable .label {
+  //       background-color: #f5f5f5;
+  //       text-align: left;
+  //       padding: 8px;
+  //       border: 1px solid #ddd;
+  //       font-weight: bold;
+  //       width: 20%;
+  //     }
+  //     .featureTable .value {
+  //       padding: 8px;
+  //       border: 1px solid #ddd;
+  //       width: 80%;
+  //     }
+  //     .location-info {
+  //       font-family: monospace;
+  //       background-color: #f9f9f9;
+  //       padding: 2px 5px;
+  //       border-radius: 3px;
+  //       font-size: 10px;
+  //       margin-bottom: 5px;
+  //       text-align: center;
+  //     }
+  //     .images-grid {
+  //       display: grid;
+  //       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  //       gap: 10px;
+  //       margin-top: 10px;
+  //       page-break-inside: auto;
+  //       width: 100%;
+  //       height: auto;
+  //       page-break-after: always;
+
+  //     }
+  //     .image-with-location {
+  //       page-break-inside: avoid;
+  //       padding: 5px;
+  //       background: white;
+  //       // width: 100%;
+  //       height: auto;
+  //       page-break-inside: avoid;
+  //       break-inside: avoid;
+
+  //     }
+  //     .image-with-location img {
+  //       max-width: 100%;
+  //       width: 100%;
+  //       height: auto;
+  //       max-height: 150px;
+  //       display: inline-block;
+  //       margin: 0 auto;
+  //       box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  //       background-color: white;
+  //       border-radius: 6px;
+  //       page-break-inside: avoid;
+  //       padding: 8px;
+  //       border: 1px solid #ccc;
+  //     }
+
+  //     @media print {
+  //       .no-print {
+  //         display: none;
+  //       }
+  //     }
+  //   </style>
+  // `;
+
   const printStyles = `
     <style>
       @page {
         size: A4;
         margin: 1.5cm 1cm 2cm 1cm;
-
         @bottom-center {
           content: "Page " counter(page) " of " counter(pages);
           font-size: 9pt;
@@ -50,7 +168,6 @@ async function generatePDFNow(element) {
           color: #555;
         }
       }
-
       body {
         font-family: Arial, sans-serif;
         line-height: 1.5;
@@ -58,50 +175,40 @@ async function generatePDFNow(element) {
         margin: 0;
         padding: 0;
       }
-
       .report-container {
         padding: 20px;
       }
-
       .report-header {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         border-bottom: 2px solid #0066cc;
-        padding-bottom: 10px;
+        padding-bottom: 5px;
       }
-
       .report-title {
-        font-size: 18pt;
+        font-size: 16pt;
         color: #0066cc;
-        margin: 0 0 5px 0;
       }
-
       .report-subtitle {
-        font-size: 12pt;
+        font-size: 10pt;
         color: #666;
         margin: 0;
       }
-
       .section {
         margin: 0;
         page-break-inside: auto;
         page-break-before: auto;
         page-break-after: auto;
       }
-
       .section-title {
         font-size: 14pt;
         color: #0066cc;
-        margin: 10px 0;
-        padding-bottom: 5px;
-        border-bottom: 1px solid #ddd;
+        
       }
-
       .featureTable {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 15px;
+        // page-break-inside: avoid;
       }
-
       .featureTable .label {
         background-color: #f5f5f5;
         text-align: left;
@@ -110,13 +217,27 @@ async function generatePDFNow(element) {
         font-weight: bold;
         width: 20%;
       }
-
       .featureTable .value {
         padding: 8px;
         border: 1px solid #ddd;
         width: 80%;
       }
-
+      .featureTable .county-cell {
+        color: #0066cc; /* Blue text color */
+        font-weight: bold;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        padding: 8px;
+        background-color: #f5f5f5; /* Optional: match the label background */
+      }
+      .featureTable .images-cell {
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: none !important;
+        padding: 8px;
+        background-color: #f5f5f5; /* Optional: match the label background */
+      }
       .location-info {
         font-family: monospace;
         background-color: #f9f9f9;
@@ -126,57 +247,50 @@ async function generatePDFNow(element) {
         margin-bottom: 5px;
         text-align: center;
       }
-
       .images-grid {
         display: grid;
-        grid-template-columns: repeat(1, 1fr);
-        gap: 10px;
-        margin-top: 10px;
-        page-break-inside: avoid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+        width: 100%;
+        page-break-after: always;
+        height: calc(100vh - 4cm); /* Full page height minus margins */
       }
-
-      .two-images {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
       .image-with-location {
-        page-break-inside: avoid;
-        border: 1px solid #eee;
-        padding: 5px;
-        background: white;
-        height: 100%;
         display: flex;
         flex-direction: column;
+        height: 100%;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
-
       .image-with-location img {
-        max-width: 100%;
-        height: auto;
-        max-height: 300px;
-        display: block;
-        margin: 0 auto;
+        width: 100%;
+        height: calc(100% - 30px); /* Subtract space for location info */
         object-fit: contain;
+        margin: 0 auto;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        background-color: white;
+        border-radius: 6px;
+        padding: 8px;
+        border: 1px solid #ccc;
       }
-
-      .image-location {
+      .image-location-text {
         text-align: center;
+        padding: 5px;
         font-size: 10px;
+        background-color: #f9f9f9;
         margin-top: 5px;
-        font-family: monospace;
+        border-radius: 3px;
       }
-
+        
       @media print {
         .no-print {
           display: none;
         }
         
-        .image-page-break {
-          page-break-after: always;
-        }
       }
     </style>
   `;
-
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -189,8 +303,9 @@ async function generatePDFNow(element) {
           <div class="report-header">
             <h1 class="report-title">Debris Threat Assessment</h1>
             <p class="report-subtitle">Generated on ${formattedDate} at ${formattedTime}</p>
-          </div>
-          <div id="print-content"></div>
+            </div>
+            <div id="print-content"></div>
+          
         </div>
       </body>
     </html>
@@ -204,94 +319,93 @@ async function generatePDFNow(element) {
   const contentClone = element.cloneNode(true);
   const featureTables = contentClone.querySelectorAll(".featureTable");
 
-  // Process each table (location)
+  //handling county cell here
+
   featureTables.forEach((table) => {
-    const sectionWrapper = printWindow.document.createElement("div");
-    sectionWrapper.className = "section";
+    // Find all rows in the table
+    const rows = table.querySelectorAll("tr");
 
-    // Extract county name and area
-    let countyName = "Unknown County";
-    let areaName = "Unknown Area";
-    const rows = Array.from(table.querySelectorAll("tr"));
+    // Find the county row by checking each row's label text
+    for (const row of rows) {
+      const labelCell = row.querySelector(".label");
+      if (labelCell && labelCell.textContent.trim() === "County:") {
+        const valueCell = row.querySelector(".value");
 
-    rows.forEach((row) => {
-      const label = row.querySelector(".label");
-      const value = row.querySelector(".value");
-      if (label && value) {
-        const labelText = label.textContent.trim().toLowerCase();
-        if (labelText === "county:") {
-          countyName = value.textContent.trim();
-          row.remove();
-        } else if (labelText === "area:") {
-          areaName = value.textContent.trim();
+        if (valueCell) {
+          // Create new combined cell
+          const combinedCell = printWindow.document.createElement("td");
+          combinedCell.className = "value county-cell";
+          combinedCell.colSpan = 2;
+          combinedCell.innerHTML = `<strong>County:</strong> ${valueCell.textContent}`;
+
+          // Replace the entire row with the new cell
+          row.innerHTML = "";
+          row.appendChild(combinedCell);
         }
+        break; // Exit loop after finding county row
       }
-    });
+    }
+    
+  });
+  //handling county cell here
 
-    // Add section title
-    const locTitle = printWindow.document.createElement("h3");
-    locTitle.className = "section-title";
-    locTitle.textContent = `County: ${countyName} | Area: ${areaName}`;
-    sectionWrapper.appendChild(locTitle);
+  const sectionWrapper = printWindow.document.createElement("div");
+  sectionWrapper.className = "section";
 
-    // Add the table (without county row)
-    sectionWrapper.appendChild(table);
-
-    // Process images
+  featureTables.forEach((table, index) => {
     const imagesCells = table.querySelectorAll(".images-cell");
     imagesCells.forEach((imagesCell) => {
       const imageDivs = Array.from(
         imagesCell.querySelectorAll(".image-with-location")
       );
+      const label =
+        imagesCell.querySelector("strong")?.outerHTML ||
+        "<strong>Images:</strong><br />";
+      const parentRow = imagesCell.closest("tr");
+      const tableBody = parentRow.parentElement;
+      // const columnCount = parentRow.children.length;
 
-      if (imageDivs.length > 0) {
-        // Remove existing content
-        imagesCell.innerHTML = "";
+      // Only keep the label in the original cell
+      imagesCell.innerHTML = label;
 
-        // Determine if we have an area (which means 1 image per page)
-        const hasArea = areaName !== "Unknown Area";
+      // Create new rows for images
+      while (imageDivs.length > 0) {
+        const newRow = printWindow.document.createElement("tr");
+        const newCell = printWindow.document.createElement("td");
+        newCell.colSpan = 2;
 
-        // Group images - 1 per page if has area, 2 otherwise
-        const groups = [];
-        if (hasArea) {
-          // One image per page
-          imageDivs.forEach((img) => groups.push([img]));
-        } else {
-          // Two images per page
-          for (let i = 0; i < imageDivs.length; i += 2) {
-            groups.push(imageDivs.slice(i, i + 2));
+        let isFirstGrid = false;
+
+        while (imageDivs.length > 0) {
+          const newRow = printWindow.document.createElement("tr");
+          const newCell = printWindow.document.createElement("td");
+          newCell.colSpan = 2;
+
+          const newGrid = printWindow.document.createElement("div");
+          newGrid.className = "images-grid";
+          newGrid.style.gridTemplateColumns =
+            imageDivs.length === 1 ? "repeat(1, 1fr)" : "repeat(1, 1fr)";
+
+          isFirstGrid = false;
+
+          for (let i = 0; i < 2 && imageDivs.length > 0; i++) {
+            newGrid.appendChild(imageDivs.shift());
           }
+
+          newCell.appendChild(newGrid);
+          newRow.appendChild(newCell);
+          tableBody.insertBefore(newRow, parentRow.nextSibling);
         }
-
-        // Create image groups with proper layout
-        groups.forEach((group, index) => {
-          const gridWrapper = printWindow.document.createElement("div");
-          gridWrapper.className = `images-grid ${
-            group.length > 1 ? "two-images" : ""
-          }`;
-
-          // Add class for page break after each group except last
-          if (index < groups.length - 1) {
-            gridWrapper.classList.add("image-page-break");
-          }
-
-          group.forEach((div) => {
-            // Ensure image has proper styling
-            const img = div.querySelector("img");
-            if (img) {
-              img.style.maxHeight = "300px";
-              img.style.width = "auto";
-            }
-            gridWrapper.appendChild(div.cloneNode(true));
-          });
-
-          imagesCell.appendChild(gridWrapper);
-        });
       }
     });
 
-    printContent.appendChild(sectionWrapper);
+    // Wrap entire table to prevent breaking between pages
+    const sectionGroup = printWindow.document.createElement("div");
+    sectionGroup.appendChild(table);
+    sectionWrapper.appendChild(sectionGroup);
   });
+
+  printContent.appendChild(sectionWrapper);
 
   await new Promise((resolve) => {
     if (printWindow.document.readyState === "complete") {
@@ -301,7 +415,6 @@ async function generatePDFNow(element) {
     }
   });
 
-  // Wait for all images to load before printing
   const images = printWindow.document.querySelectorAll("img");
   await Promise.all(
     Array.from(images).map((img) => {
