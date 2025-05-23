@@ -72,7 +72,7 @@ require([
     IsEmpty($feature.Impact), 
     "brown", 
     IIF(
-      $feature.Impact == "Not a Threat", 
+      $feature.Impact == "To Be Removed", 
       "white", 
       "yellow"
     )
@@ -96,7 +96,7 @@ require([
           color: "white",
           size: "10px",
         },
-        label: "Not a Threat",
+        label: "To Be Removed",
       },
       {
         value: "yellow", // This corresponds to the color returned for other non-null values
@@ -493,36 +493,7 @@ require([
     `;
           countyTable.appendChild(areaRow);
 
-          // Create threats row
-          //       const threatSet = new Set(features.map((item) => item.threat));
-          //       const threats = [...threatSet].join(", ");
-
-          //       const threatsRow = document.createElement("tr");
-          //       threatsRow.innerHTML = `
-          //   <td class="label">Threats:</td>
-          //   <td class="value" id="threatsCell">${threats}</td>
-          // `;
-          //       countyTable.appendChild(threatsRow);
-
-          //creating threats by bullets
-          //   const threatSet = new Set(features.map((item) => item.threat));
-          //   const threats = [...threatSet];
-
-          //   // Create a list of threats as bullet points
-          //   const threatList = threats
-          //     .map((threat) => `<li>${threat}</li>`)
-          //     .join("");
-
-          //   const threatsRow = document.createElement("tr");
-          //   threatsRow.innerHTML = `
-          //   <td class="label">Threats:</td>
-          //   <td class="value" id="threatsCell">
-          //     <ul style="margin: 0; padding-left: 20px;">${threatList}</ul>
-          //   </td>
-          // `;
-          //   countyTable.appendChild(threatsRow);
-
-          //-------------------threats trying-----------------------
+          //-------------------threats row-----------------------
           // Step 1: Define known threat types
           const knownThreats = [
             "Immediate threat to life, public health, or safety",
@@ -564,7 +535,7 @@ require([
         `;
           countyTable.appendChild(threatsRow);
 
-          //-------------------threats trying-----------------------
+          //-------------------threats row-----------------------
 
           // Create Notes row
           const notesSet = new Set(features.map((item) => item.notes));
