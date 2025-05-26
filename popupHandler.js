@@ -13,6 +13,7 @@ export function setupPopup(view) {
         // Create a popup content string for all features under the click
         let popupContent = "";
         const orderedFields = [
+          "Source",
           "COUNTY",
           "Work_Area_Name",
           "Impact",

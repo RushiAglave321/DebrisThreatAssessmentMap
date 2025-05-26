@@ -167,7 +167,7 @@ require([
     labelingInfo: [
       {
         labelExpressionInfo: {
-          expression: "$feature.County", // Change "NAME" to your desired field
+          expression: "$feature.County", // Change "County" to your desired field
         },
         symbol: {
           type: "text", // autocasts as new TextSymbol()
@@ -193,6 +193,28 @@ require([
     title: "Work Area",
     visible: true,
     opacity: 0.3,
+    labelingInfo: [
+      {
+        labelExpressionInfo: {
+          expression: "$feature.Work_Area_Name ", // Change "Work_Area_Name " to your desired field
+        },
+        symbol: {
+          type: "text", // autocasts as new TextSymbol()
+          color: "#cbcbcb",
+          haloColor: "black",
+          haloSize: "2px",
+          font: {
+            size: 12,
+            family: "sans-serif",
+            weight: "bold",
+          },
+        },
+        labelPlacement: "center-right",
+        minScale: 800000,
+      },
+    ],
+
+    labelsVisible: true, // Important!
   });
   // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
   let Life_Safety_and_Emergency_Response_Zone_Threats_FULL = new FeatureLayer({
@@ -565,9 +587,8 @@ require([
                 return `
                   <div class="image-with-location">
                     <div class="location-info" style="text-align: center;">${lat},${" "}${lon}</div>
-                    <img class="img-fluid mx-auto d-block avoid-break" src="${
-                      item.image_url
-                    }" alt="Feature Image" />
+                    <img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url
+                  }" alt="Feature Image" />
                   </div>
                 `;
               }
@@ -706,6 +727,13 @@ require([
       checkboxes.forEach((checkbox) => {
         checkbox.checked = false;
       });
+
+      const mapCheckbox = document.getElementById("takeScreenshot");
+      if (mapCheckbox) {
+        mapCheckbox.checked = false;
+        localStorage.removeItem("mapScreenshot");
+      }
+
       highlight.remove();
     });
   });
@@ -721,8 +749,9 @@ require([
       if (this.checked) {
         view.takeScreenshot().then(
           function (screenshot) {
-            document.getElementById("screenshotImage").src = screenshot.dataUrl;
-            this.checked = false; // uncheck after taking screenshot
+            // document.getElementById("screenshotImage").src = screenshot.dataUrl;
+            localStorage.setItem("mapScreenshot", screenshot.dataUrl);
+            // this.checked = false; // uncheck after taking screenshot
           }.bind(this)
         );
       }
@@ -735,6 +764,11 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("downloadPDFBtn")
     .addEventListener("click", () => {
       generatePDF();
+      const mapCheckbox = document.getElementById("takeScreenshot");
+      if (!mapCheckbox.checked) {
+        // mapCheckbox.checked == false;
+        localStorage.removeItem("mapScreenshot");
+      }
     });
 });
 
