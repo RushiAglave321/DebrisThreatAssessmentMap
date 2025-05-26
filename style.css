@@ -466,7 +466,10 @@ img {
   margin-bottom: 10px;
 }
 
-
+.takeScreenshot{
+  /* color: black; */
+  font-weight: bold;
+}
 
 
 
