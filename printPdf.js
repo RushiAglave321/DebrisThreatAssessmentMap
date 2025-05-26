@@ -26,135 +26,13 @@ async function generatePDFNow(element) {
   if (!printWindow) throw new Error("Popup blocked. Please allow popups.");
 
   const now = new Date();
-  const formattedDate = `${
-    now.getMonth() + 1
-  }/${now.getDate()}/${now.getFullYear()}`;
+  const formattedDate = `${now.getMonth() + 1
+    }/${now.getDate()}/${now.getFullYear()}`;
   const formattedTime = `${now.getHours()}:${String(now.getMinutes()).padStart(
     2,
     "0"
   )}:${String(now.getSeconds()).padStart(2, "0")}`;
 
-  // const printStyles = `
-  //   <style>
-  //     @page {
-  //       size: A4;
-  //       margin: 1.5cm 1cm 2cm 1cm;
-  //       @bottom-center {
-  //         content: "Page " counter(page) " of " counter(pages);
-  //         font-size: 9pt;
-  //         font-family: Arial, sans-serif;
-  //         color: #555;
-  //       }
-  //     }
-  //     body {
-  //       font-family: Arial, sans-serif;
-  //       line-height: 1.5;
-  //       color: #333;
-  //       margin: 0;
-  //       padding: 0;
-  //     }
-  //     .report-container {
-  //       padding: 20px;
-  //     }
-  //     .report-header {
-  //       margin-bottom: 20px;
-  //       border-bottom: 2px solid #0066cc;
-  //       padding-bottom: 10px;
-  //     }
-  //     .report-title {
-  //       font-size: 18pt;
-  //       color: #0066cc;
-  //       margin: 0 0 5px 0;
-  //     }
-  //     .report-subtitle {
-  //       font-size: 12pt;
-  //       color: #666;
-  //       margin: 0;
-  //     }
-  //     .section {
-  //       margin: 0;
-  //       page-break-inside: auto;
-  //       page-break-before: auto;
-  //       page-break-after: auto;
-  //     }
-  //     .section-title {
-  //       font-size: 14pt;
-  //       color: #0066cc;
-  //       margin: 10px 0;
-  //       padding-bottom: 5px;
-  //       border-bottom: 1px solid #ddd;
-  //     }
-  //     .featureTable {
-  //       width: 100%;
-  //       border-collapse: collapse;
-  //       margin-bottom: 15px;
-  //       page-break-inside: avoid;
-  //     }
-  //     .featureTable .label {
-  //       background-color: #f5f5f5;
-  //       text-align: left;
-  //       padding: 8px;
-  //       border: 1px solid #ddd;
-  //       font-weight: bold;
-  //       width: 20%;
-  //     }
-  //     .featureTable .value {
-  //       padding: 8px;
-  //       border: 1px solid #ddd;
-  //       width: 80%;
-  //     }
-  //     .location-info {
-  //       font-family: monospace;
-  //       background-color: #f9f9f9;
-  //       padding: 2px 5px;
-  //       border-radius: 3px;
-  //       font-size: 10px;
-  //       margin-bottom: 5px;
-  //       text-align: center;
-  //     }
-  //     .images-grid {
-  //       display: grid;
-  //       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  //       gap: 10px;
-  //       margin-top: 10px;
-  //       page-break-inside: auto;
-  //       width: 100%;
-  //       height: auto;
-  //       page-break-after: always;
-
-  //     }
-  //     .image-with-location {
-  //       page-break-inside: avoid;
-  //       padding: 5px;
-  //       background: white;
-  //       // width: 100%;
-  //       height: auto;
-  //       page-break-inside: avoid;
-  //       break-inside: avoid;
-
-  //     }
-  //     .image-with-location img {
-  //       max-width: 100%;
-  //       width: 100%;
-  //       height: auto;
-  //       max-height: 150px;
-  //       display: inline-block;
-  //       margin: 0 auto;
-  //       box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  //       background-color: white;
-  //       border-radius: 6px;
-  //       page-break-inside: avoid;
-  //       padding: 8px;
-  //       border: 1px solid #ccc;
-  //     }
-
-  //     @media print {
-  //       .no-print {
-  //         display: none;
-  //       }
-  //     }
-  //   </style>
-  // `;
 
   const printStyles = `
     <style>
@@ -319,8 +197,57 @@ async function generatePDFNow(element) {
   const contentClone = element.cloneNode(true);
   const featureTables = contentClone.querySelectorAll(".featureTable");
 
-  //handling county cell here
+  // Adding map snapshot here
+  const screenshotDataUrl = localStorage.getItem("mapScreenshot");
 
+  if (screenshotDataUrl) {
+    const mapImage = printWindow.document.createElement("img");
+    mapImage.src = screenshotDataUrl;
+    mapImage.alt = "Map Screenshot";
+    mapImage.style.maxWidth = "100%";
+    mapImage.style.height = "auto";
+    mapImage.style.display = "block";
+    mapImage.style.border = "1px solid #ccc";
+    mapImage.style.borderRadius = "6px";
+    mapImage.style.boxShadow = "2px 2px 4px rgba(0, 0, 0, 0.2)";
+    mapImage.className = "map-screenshot";
+
+    // Center wrapper
+    const mapImageWrapper = printWindow.document.createElement("div");
+    mapImageWrapper.style.textAlign = "center";
+    mapImageWrapper.style.textAlign = "center";
+    mapImageWrapper.style.width = "100%";
+    mapImageWrapper.style.margin = "auto";
+    mapImageWrapper.appendChild(mapImage);
+
+    const mapSection = printWindow.document.createElement("div");
+    mapSection.className = "section";
+    mapSection.style.display = "flex";
+    mapSection.style.flexDirection = "column";
+    mapSection.style.justifyContent = "center"; // Vertical centering
+    mapSection.style.alignItems = "center"; // Horizontal centering
+    mapSection.style.minHeight = "calc(100vh - 4cm)"; // Full page height minus margins
+    mapSection.style.pageBreakAfter = "always";
+    mapSection.style.width = "100%";
+
+    const title = printWindow.document.createElement("h2");
+    title.className = "section-title";
+    title.innerText = "Debris Threat Assessment Map";
+    title.style.marginBottom = "10px";
+
+    mapSection.appendChild(title);
+    mapSection.appendChild(mapImageWrapper);
+
+    const reportContainer = printWindow.document.querySelector(".report-container");
+    const header = reportContainer.querySelector(".report-header");
+
+    if (header && mapSection) {
+      reportContainer.insertBefore(mapSection, header.nextSibling);
+    }
+  }
+
+
+//Editing county row
   featureTables.forEach((table) => {
     // Find all rows in the table
     const rows = table.querySelectorAll("tr");
@@ -345,13 +272,14 @@ async function generatePDFNow(element) {
         break; // Exit loop after finding county row
       }
     }
-    
-  });
-  //handling county cell here
 
+  });
+
+  
   const sectionWrapper = printWindow.document.createElement("div");
   sectionWrapper.className = "section";
-
+  
+  //handling images here
   featureTables.forEach((table, index) => {
     const imagesCells = table.querySelectorAll(".images-cell");
     imagesCells.forEach((imagesCell) => {
