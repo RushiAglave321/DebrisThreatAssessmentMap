@@ -194,28 +194,28 @@ require([
     title: "Work Area",
     visible: true,
     opacity: 0.3,
-    labelingInfo: [
-      {
-        labelExpressionInfo: {
-          expression: "$feature.Work_Area_Name ", // Change "Work_Area_Name " to your desired field
-        },
-        symbol: {
-          type: "text", // autocasts as new TextSymbol()
-          color: "#cbcbcb",
-          haloColor: "black",
-          haloSize: "2px",
-          font: {
-            size: 12,
-            family: "sans-serif",
-            weight: "bold",
-          },
-        },
-        labelPlacement: "center-right",
-        minScale: 800000,
-      },
-    ],
+    // labelingInfo: [
+    //   {
+    //     labelExpressionInfo: {
+    //       expression: "$feature.Work_Area_Name ", // Change "Work_Area_Name " to your desired field
+    //     },
+    //     symbol: {
+    //       type: "text", // autocasts as new TextSymbol()
+    //       color: "#cbcbcb",
+    //       haloColor: "black",
+    //       haloSize: "2px",
+    //       font: {
+    //         size: 12,
+    //         family: "sans-serif",
+    //         weight: "bold",
+    //       },
+    //     },
+    //     labelPlacement: "center-right",
+    //     minScale: 800000,
+    //   },
+    // ],
 
-    labelsVisible: true, // Important!
+    // labelsVisible: true, // Important!
   });
   // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
   let Life_Safety_and_Emergency_Response_Zone_Threats_FULL = new FeatureLayer({
