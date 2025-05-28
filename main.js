@@ -29,6 +29,7 @@ require([
   Zoom,
   BasemapGallery
 ) => {
+  //Global variable
   const map = new Map({ basemap: "streets" });
 
   const view = new MapView({
@@ -71,16 +72,16 @@ require([
     type: "unique-value",
     valueExpression: `
   IIF(
-    IsEmpty($feature.Impact), 
+    IsEmpty($feature.Impacts), 
     "brown", 
     IIF(
-      $feature.Impact == "To Be Removed", 
+      $feature.Impacts == "To Be Removed", 
       "white", 
       "yellow"
     )
   )
 `,
-    valueExpressionTitle: "Impact",
+    valueExpressionTitle: "Impacts",
     uniqueValueInfos: [
       {
         value: "brown", // This corresponds to the color returned when Impact is empty
@@ -315,7 +316,7 @@ require([
           // Show image
 
           //show impact field
-          const impactField = graphic.attributes.Impact;
+          const impactField = graphic.attributes.Impacts;
           const impactElement = document.getElementById("threatsCell");
 
           if (impactField) {
@@ -486,7 +487,7 @@ require([
 
         // Push feature data into the group
         groupedData[county][area].push({
-          threat: attr.Impact || "N/A",
+          threat: attr.Impacts || "N/A",
           image_url: attr.image_url || null,
           image_name: attr.image_name || null,
           notes: attr.notes || null,
@@ -697,7 +698,7 @@ require([
 
       for (let feature of selectedFeatures) {
         if (selectedValues.length > 0) {
-          feature.attributes.Impact = selectedValues.join(", ");
+          feature.attributes.Impacts = selectedValues.join(", ");
         }
         if (notes) {
           feature.attributes.notes = notes;
@@ -742,20 +743,23 @@ require([
     featureLayer.queryExtent().then((response) => view.goTo(response.extent));
   });
 
-  //---------------Print map ----------------------
-  document
-    .getElementById("takeScreenshot")
-    .addEventListener("change", function () {
-      if (this.checked) {
-        view.takeScreenshot().then(
-          function (screenshot) {
-            // document.getElementById("screenshotImage").src = screenshot.dataUrl;
-            localStorage.setItem("mapScreenshot", screenshot.dataUrl);
-            // this.checked = false; // uncheck after taking screenshot
-          }.bind(this)
-        );
-      }
-    });
+  //---------------Print map in report ----------------------
+  document.getElementById("takeScreenshot").addEventListener("change", function () {
+    if (this.checked) {
+      // Hide labels before screenshot
+      Work_Layer.labelsVisible = false;
+  
+      // Allow time for label change to reflect visually before taking screenshot
+      setTimeout(() => {
+        view.takeScreenshot().then((screenshot) => {
+          localStorage.setItem("mapScreenshot", screenshot.dataUrl);
+  
+          // Optional: Restore labels after screenshot
+          Work_Layer.labelsVisible = true;
+        });
+      }, 500); // 500ms delay to allow label visibility to update
+    }
+  });
 });
 
 //-------------------------------printing pdf----------------------------------------------------
@@ -813,7 +817,7 @@ const baseUrl =
   "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0/query";
 
 // Change this to the actual field you're analyzing
-const fieldName = "Impact";
+const fieldName = "Impacts";
 
 async function getCount(whereClause) {
   const url = `${baseUrl}/query?where=${encodeURIComponent(

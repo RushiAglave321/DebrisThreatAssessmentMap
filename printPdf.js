@@ -108,6 +108,8 @@ async function generatePDFNow(element) {
         border-top: none !important;
         padding: 8px;
         background-color: #f5f5f5; /* Optional: match the label background */
+        page-break-before: always;
+
       }
       .featureTable .images-cell {
         border-left: none !important;
@@ -131,8 +133,8 @@ async function generatePDFNow(element) {
         gap: 20px;
         margin: 20px 0;
         width: 100%;
-        page-break-after: always;
-        height: calc(100vh - 4cm); /* Full page height minus margins */
+        
+       
       }
       .image-with-location {
         display: flex;
@@ -247,7 +249,8 @@ async function generatePDFNow(element) {
   }
 
 
-//Editing county row
+  //Editing county row
+  let count = 1;
   featureTables.forEach((table) => {
     // Find all rows in the table
     const rows = table.querySelectorAll("tr");
@@ -262,6 +265,17 @@ async function generatePDFNow(element) {
           // Create new combined cell
           const combinedCell = printWindow.document.createElement("td");
           combinedCell.className = "value county-cell";
+          if (screenshotDataUrl) {
+            combinedCell.style.pageBreakBefore = "always";
+          } else {
+            if (count === 1) {
+              combinedCell.style.pageBreakBefore = "avoid";
+              count++; // ✅ Make sure to increment here
+            } else {
+              combinedCell.style.pageBreakBefore = "always";
+            }
+          }
+
           combinedCell.colSpan = 2;
           combinedCell.innerHTML = `<strong>County:</strong> ${valueCell.textContent}`;
 
@@ -269,16 +283,58 @@ async function generatePDFNow(element) {
           row.innerHTML = "";
           row.appendChild(combinedCell);
         }
+
         break; // Exit loop after finding county row
       }
     }
 
   });
 
-  
+
+  // handling area
+  // featureTables.forEach((table) => {
+  //   // Find all rows in the table
+  //   const rows = table.querySelectorAll("tr");
+
+  //   // Find the county row by checking each row's label text
+  //   for (const row of rows) {
+  //     const labelCell = row.querySelector(".label");
+  //     if (labelCell && labelCell.textContent.trim() === "County:") {
+  //       const valueCell = row.querySelector(".value");
+
+  //       if (valueCell) {
+  //         // Create new combined cell
+  //         const combinedCell = printWindow.document.createElement("td");
+  //         combinedCell.className = "value county-cell";
+  //         if (screenshotDataUrl) {
+  //           combinedCell.style.pageBreakBefore = "always";
+  //         } else {
+  //           if (count === 1) {
+  //             combinedCell.style.pageBreakBefore = "avoid";
+  //             count++; // ✅ Make sure to increment here
+  //           } else {
+  //             combinedCell.style.pageBreakBefore = "always";
+  //           }
+  //         }
+
+  //         combinedCell.colSpan = 2;
+  //         combinedCell.innerHTML = `<strong>County:</strong> ${valueCell.textContent}`;
+
+  //         // Replace the entire row with the new cell
+  //         row.innerHTML = "";
+  //         row.appendChild(combinedCell);
+  //       }
+
+  //       break; // Exit loop after finding county row
+  //     }
+  //   }
+
+  // });
+
+
   const sectionWrapper = printWindow.document.createElement("div");
   sectionWrapper.className = "section";
-  
+
   //handling images here
   featureTables.forEach((table, index) => {
     const imagesCells = table.querySelectorAll(".images-cell");
@@ -316,7 +372,7 @@ async function generatePDFNow(element) {
 
           isFirstGrid = false;
 
-          for (let i = 0; i < 2 && imageDivs.length > 0; i++) {
+          for (let i = 0; i < 1 && imageDivs.length > 0; i++) {
             newGrid.appendChild(imageDivs.shift());
           }
 

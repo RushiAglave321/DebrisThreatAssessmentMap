@@ -16,7 +16,7 @@ export function setupPopup(view) {
           "Source",
           "COUNTY",
           "Work_Area_Name",
-          "Impact",
+          "Impacts",
           "location",
           "image_name",
           "image_url",
