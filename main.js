@@ -758,6 +758,8 @@ require([
           Work_Layer.labelsVisible = true;
         });
       }, 500); // 500ms delay to allow label visibility to update
+    }else{
+      localStorage.removeItem("mapScreenshot");
     }
   });
 });
