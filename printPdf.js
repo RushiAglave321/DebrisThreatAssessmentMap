@@ -291,45 +291,33 @@ async function generatePDFNow(element) {
   });
 
 
-  // handling area
-  // featureTables.forEach((table) => {
-  //   // Find all rows in the table
-  //   const rows = table.querySelectorAll("tr");
+  featureTables.forEach((table) => {
+    const rows = table.querySelectorAll("tr");
+    let countySeenBeforeArea = false;
 
-  //   // Find the county row by checking each row's label text
-  //   for (const row of rows) {
-  //     const labelCell = row.querySelector(".label");
-  //     if (labelCell && labelCell.textContent.trim() === "County:") {
-  //       const valueCell = row.querySelector(".value");
+    for (const row of rows) {
+      const strongElement = row.querySelector('strong');
 
-  //       if (valueCell) {
-  //         // Create new combined cell
-  //         const combinedCell = printWindow.document.createElement("td");
-  //         combinedCell.className = "value county-cell";
-  //         if (screenshotDataUrl) {
-  //           combinedCell.style.pageBreakBefore = "always";
-  //         } else {
-  //           if (count === 1) {
-  //             combinedCell.style.pageBreakBefore = "avoid";
-  //             count++; // ✅ Make sure to increment here
-  //           } else {
-  //             combinedCell.style.pageBreakBefore = "always";
-  //           }
-  //         }
+      const labelCell = row.querySelector(".label");
+      const labelText = labelCell?.textContent.trim();
 
-  //         combinedCell.colSpan = 2;
-  //         combinedCell.innerHTML = `<strong>County:</strong> ${valueCell.textContent}`;
+      if (strongElement && strongElement.textContent.trim() === "County:") {
+        countySeenBeforeArea = true;
+      }
 
-  //         // Replace the entire row with the new cell
-  //         row.innerHTML = "";
-  //         row.appendChild(combinedCell);
-  //       }
+      if (labelText === "Area:") {
+        // Apply style only if county has NOT been seen
+        if (!countySeenBeforeArea) {
+          row.style.pageBreakBefore = "always";
+        } else {
+          row.style.pageBreakBefore = "avoid"; // or omit this line if not needed
+          countySeenBeforeArea = false;
+        } 
+      }
+    }
+  });
 
-  //       break; // Exit loop after finding county row
-  //     }
-  //   }
 
-  // });
 
 
   const sectionWrapper = printWindow.document.createElement("div");
