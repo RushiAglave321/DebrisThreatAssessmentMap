@@ -290,7 +290,7 @@ async function generatePDFNow(element) {
 
   });
 
-
+  //handling area here
   featureTables.forEach((table) => {
     const rows = table.querySelectorAll("tr");
     let countySeenBeforeArea = false;
@@ -312,9 +312,35 @@ async function generatePDFNow(element) {
         } else {
           row.style.pageBreakBefore = "avoid"; // or omit this line if not needed
           countySeenBeforeArea = false;
-        } 
+        }
+
+        // Make the value cell bold
+        const valueCell = labelCell.nextElementSibling;
+        if (valueCell) {
+          valueCell.style.fontWeight = "bold"; // Option 1: apply bold style
+
+          // OR Option 2: wrap text in <strong>
+          // valueCell.innerHTML = `<strong>${valueCell.textContent.trim()}</strong>`;
+        }
+
       }
     }
+  });
+
+  //removing notes row from report
+  // Inside the generatePDFNow function, after the featureTables are selected
+  featureTables.forEach((table) => {
+    // Remove Notes row if it exists
+    const rows = table.querySelectorAll("tr");
+    rows.forEach((row) => {
+      const labelCell = row.querySelector(".label");
+      if (labelCell && labelCell.textContent.trim() === "Notes:") {
+        row.remove();
+      }
+    });
+
+    // Rest of your existing county row processing code...
+    // [Keep all the existing county row processing code here]
   });
 
 
