@@ -39,6 +39,17 @@ async function generatePDFNow(element) {
       @page {
         size: A4;
         margin: 1.5cm 1cm 2cm 1cm;
+
+        @top-left {
+          content: "";
+          // background-image: url('path/to/your/logo.png');
+          background-size: contain;
+          background-repeat: no-repeat;
+          height: 1.5cm;
+          width: 3cm;
+          margin-top: -0.5cm;
+        }
+       
         @bottom-center {
           content: "Page " counter(page) " of " counter(pages);
           font-size: 9pt;
@@ -46,12 +57,14 @@ async function generatePDFNow(element) {
           color: #555;
         }
       }
+
+      
       body {
         font-family: Arial, sans-serif;
         line-height: 1.5;
         color: #333;
         margin: 0;
-        padding: 0;
+        padding: 15px 0 0 0;
       }
       .report-container {
         padding: 20px;
@@ -167,7 +180,18 @@ async function generatePDFNow(element) {
         .no-print {
           display: none;
         }
-        
+        .logo-every-page {
+          position: fixed;
+          display:flex;
+          justify-content:end;
+          z-index: 1000;
+          top:0;
+          right:0
+        }
+        .img-logo{
+          width: 153.6px;
+          height: 30.7px;
+        }
       }
     </style>
   `;
@@ -179,6 +203,9 @@ async function generatePDFNow(element) {
         ${printStyles}
       </head>
       <body>
+      <div class="logo-every-page">
+        <img src="images/CDR_EM_black_transparent.png" alt="Logo" class="img-logo">
+      </div>
         <div class="report-container">
           <div class="report-header">
             <h1 class="report-title">Debris Threat Assessment</h1>
@@ -273,6 +300,7 @@ async function generatePDFNow(element) {
               count++; // ✅ Make sure to increment here
             } else {
               combinedCell.style.pageBreakBefore = "always";
+              
             }
           }
 
@@ -328,7 +356,6 @@ async function generatePDFNow(element) {
   });
 
   //removing notes row from report
-  // Inside the generatePDFNow function, after the featureTables are selected
   featureTables.forEach((table) => {
     // Remove Notes row if it exists
     const rows = table.querySelectorAll("tr");
@@ -339,8 +366,6 @@ async function generatePDFNow(element) {
       }
     });
 
-    // Rest of your existing county row processing code...
-    // [Keep all the existing county row processing code here]
   });
 
 
