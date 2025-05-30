@@ -275,8 +275,7 @@ async function generatePDFNow(element) {
     }
   }
 
-
-  //Editing county row
+  //-------------------Editing county row-----------------------------------
   let count = 1;
   featureTables.forEach((table) => {
     // Find all rows in the table
@@ -315,10 +314,9 @@ async function generatePDFNow(element) {
         break; // Exit loop after finding county row
       }
     }
-
   });
 
-  //handling area here
+  //--------------handling area row here----------------------------------
   featureTables.forEach((table) => {
     const rows = table.querySelectorAll("tr");
     let countySeenBeforeArea = false;
@@ -368,9 +366,6 @@ async function generatePDFNow(element) {
 
   });
 
-
-
-
   const sectionWrapper = printWindow.document.createElement("div");
   sectionWrapper.className = "section";
 
@@ -397,29 +392,21 @@ async function generatePDFNow(element) {
         const newCell = printWindow.document.createElement("td");
         newCell.colSpan = 2;
 
-        let isFirstGrid = false;
+        const newGrid = printWindow.document.createElement("div");
+        newGrid.className = "images-grid";
+        newGrid.style.gridTemplateColumns =
+          imageDivs.length === 1 ? "repeat(1, 1fr)" : "repeat(1, 1fr)";
 
-        while (imageDivs.length > 0) {
-          const newRow = printWindow.document.createElement("tr");
-          const newCell = printWindow.document.createElement("td");
-          newCell.colSpan = 2;
 
-          const newGrid = printWindow.document.createElement("div");
-          newGrid.className = "images-grid";
-          newGrid.style.gridTemplateColumns =
-            imageDivs.length === 1 ? "repeat(1, 1fr)" : "repeat(1, 1fr)";
-
-          isFirstGrid = false;
-
-          for (let i = 0; i < 1 && imageDivs.length > 0; i++) {
-            newGrid.appendChild(imageDivs.shift());
-          }
-
-          newCell.appendChild(newGrid);
-          newRow.appendChild(newCell);
-          tableBody.insertBefore(newRow, parentRow.nextSibling);
+        for (let i = 0; i < 1 && imageDivs.length > 0; i++) {
+          newGrid.appendChild(imageDivs.shift());
         }
+
+        newCell.appendChild(newGrid);
+        newRow.appendChild(newCell);
+        tableBody.insertBefore(newRow, parentRow.nextSibling);
       }
+     
     });
 
     // Wrap entire table to prevent breaking between pages
