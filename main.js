@@ -1,9 +1,11 @@
 //---------------All Import section---------------------------------------------------------
 import { generatePDF } from "./printPdf.js";
 import { setupPopup } from "./popupHandler.js";
+import { updateTable } from "./updateTableDynamically.js";
 
 require([
   "esri/Map",
+  "esri/WebMap",
   "esri/views/MapView",
   "esri/layers/FeatureLayer",
   "esri/widgets/Search",
@@ -17,6 +19,7 @@ require([
   "esri/widgets/BasemapGallery",
 ], (
   Map,
+  WebMap,
   MapView,
   FeatureLayer,
   Search,
@@ -29,21 +32,22 @@ require([
   Zoom,
   BasemapGallery
 ) => {
-  //Global variable
-  const map = new Map({ basemap: "streets" });
+
+  const map = new WebMap({
+    portalItem: {
+      id: "d5644bd6877a4fe2a9de21af0c93b909"
+    }
+  });
 
   const view = new MapView({
     container: "viewDiv",
     map: map,
     zoom: 6,
     center: [-80.19179, 25.76168], // Miami
-    popup: {
-      dockEnabled: false, // or true
-      autoOpenEnabled: false,
-    },
   });
 
-  //basemapgallery
+  //------------*****MAP TOOL STARTS****-----------------------------------------------
+  // -----------Adding basemapgallery -----------------------
   const basemapGallery = new BasemapGallery({
     view: view,
   });
@@ -59,610 +63,111 @@ require([
     position: "bottom-left",
   });
 
-  //--------------------------------------------*feature Layers*-----------------------------------------------
+  //--------------Adding layerlist-----------------
+  const layerList = new LayerList({
+    view: view,
+  });
+
+  const layerListExpand = new Expand({
+    view: view,
+    content: layerList,
+    expandIconClass: "esri-icon-layer-list", // icon
+    expandTooltip: "Map Layers",
+  });
+
+  //---------------Adding legends--------------------------
+  const legend = new Legend({
+    view: view,
+  });
+
+  const legendListExpand = new Expand({
+    view: view,
+    content: legend,
+    expandIconClass: "esri-icon-legend", // optional: changes icon
+    expandTooltip: "Legend",
+  });
+
+  //---------Adding zoom and search bar-----------------
+  view.ui.remove("zoom");
+
+  const searchWidget = new Search({ view });
+  const zoomWidget = new Zoom({ view });
+
+  // Create a single shared container for both widgets
+  const horizontalContainer = document.createElement("div");
+  horizontalContainer.style.display = "flex";
+  horizontalContainer.style.alignItems = "center";
+  horizontalContainer.style.gap = "10px";
+  horizontalContainer.style.padding = "2px";
+  horizontalContainer.style.background = "transparent";
+  horizontalContainer.style.borderRadius = "6px";
+  // Let ArcGIS render them manually
+  view.ui.add(searchWidget, "manual");
+  view.ui.add(zoomWidget, "manual");
+
+  // Append them in the order you want: Zoom (left), Search (right)
+  horizontalContainer.appendChild(searchWidget.container);
+  horizontalContainer.appendChild(zoomWidget.container);
+
+  //Adding Order wise map componant
+  view.ui.add(horizontalContainer, "top-right"); //zoom and search bar
+  view.ui.add(layerListExpand, "top-right"); // layerlist
+  view.ui.add(legendListExpand, "top-right"); // legend 
+
+  //--------------------------------------------*****MAP TOOL ENDS****-----------------------------------------------
+
+
   //Graphic layer for selection
   const graphicsLayer = new GraphicsLayer({
     title: "Selected Features",
   });
   map.add(graphicsLayer);
 
-  //render arcade expression for filtering null and not null value for symbology in feature layer
-  //legend are configured from this
-  const renderer = {
-    type: "unique-value",
-    valueExpression: `
-  IIF(
-    IsEmpty($feature.Impacts), 
-    "brown", 
-    IIF(
-      $feature.Impacts == "To Be Removed", 
-      "white", 
-      "yellow"
-    )
-  )
-`,
-    valueExpressionTitle: "Impacts",
-    uniqueValueInfos: [
-      {
-        value: "brown", // This corresponds to the color returned when Impact is empty
-        symbol: {
-          type: "simple-marker",
-          color: "brown",
-          size: "10px",
-        },
-        label: "No Threat Assigned",
-      },
-      {
-        value: "white", // This corresponds to the color returned for "Not a Threat"
-        symbol: {
-          type: "simple-marker",
-          color: "white",
-          size: "10px",
-        },
-        label: "To Be Removed",
-      },
-      {
-        value: "yellow", // This corresponds to the color returned for other non-null values
-        symbol: {
-          type: "simple-marker",
-          color: "yellow",
-          size: "10px",
-        },
-        label: "Threats Assigned",
-      },
-    ],
-  };
-  let featureLayer = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0",
-    outFields: ["*"],
-    title: "Debris - AshBritt",
-    renderer: renderer,
-  });
-  let ticketData = new FeatureLayer({
-    url: "https://gis.cdrmaguire.com/arcgis/rest/services/DBO_DR4828FL_Waterway_Barge_Tickets_Public_Facing/FeatureServer/44",
-    outFields: ["*"],
-    title: "Ticket Data",
-    visible: false,
-    renderer: {
-      type: "simple", // SimpleRenderer
-      symbol: {
-        type: "simple-marker", // For points
-        color: "purple", // Fill color
-        size: 8, // Size of the marker
-        outline: {
-          color: "white", // Outline color
-          width: 1, // Outline width
-        },
-      },
-    },
-  });
-  //clint setup web map 8 layers
-  let THREATS_PS_StormSurge = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_PS_StormSurge/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS PS StormSurge",
-    visible: false,
-  });
-  let THREATS_FM_dfirm_fldhaz_100_500Yr = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/THREATS_FM_dfirm_fldhaz_100_500Yr/FeatureServer/0",
-    outFields: ["*"],
-    title: "THREATS FM dfirm fldhaz 100 500Yr",
-    visible: false,
-  });
-  let County_Layer = new FeatureLayer({
-    url: "https://ocean.floridamarine.org/arcgis/rest/services/FWC_GIS/MRGIS_Boundaries/FeatureServer/36",
-    outFields: ["*"],
-    title: "County Work Boundary",
-    visible: true,
-    renderer: {
-      type: "simple", // SimpleRenderer
-      symbol: {
-        type: "simple-fill", // For polygons
-        color: "rgba(0,0,0,0)", // 50% opacity
-        outline: {
-          color: "blue",
-          width: 1,
-        },
-      },
-    },
-    labelingInfo: [
-      {
-        labelExpressionInfo: {
-          expression: "$feature.County", // Change "County" to your desired field
-        },
-        symbol: {
-          type: "text", // autocasts as new TextSymbol()
-          color: "white",
-          haloColor: "black",
-          haloSize: "2px",
-          font: {
-            size: 12,
-            family: "sans-serif",
-            weight: "bold",
-          },
-        },
-        labelPlacement: "center-right",
-        minScale: 800000,
-      },
-    ],
-
-    labelsVisible: true, // Important!
-  });
-  let Work_Layer = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/FL_Waterway_Debris___Completed_Work_Areas/FeatureServer/0",
-    outFields: ["*"],
-    title: "Work Area",
-    visible: true,
-    opacity: 0.3,
-    // labelingInfo: [
-    //   {
-    //     labelExpressionInfo: {
-    //       expression: "$feature.Work_Area_Name ", // Change "Work_Area_Name " to your desired field
-    //     },
-    //     symbol: {
-    //       type: "text", // autocasts as new TextSymbol()
-    //       color: "#cbcbcb",
-    //       haloColor: "black",
-    //       haloSize: "2px",
-    //       font: {
-    //         size: 12,
-    //         family: "sans-serif",
-    //         weight: "bold",
-    //       },
-    //     },
-    //     labelPlacement: "center-right",
-    //     minScale: 800000,
-    //   },
-    // ],
-
-    // labelsVisible: true, // Important!
-  });
-  // Adding layers from THREAT_ASSESSMENT_VIEWER_LAYERSET
-  let Life_Safety_and_Emergency_Response_Zone_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Life_Safety_and_Emergency_Response_Zone_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Life Safety and Emergency Response Zone Threats FULL",
-    visible: false,
-  });
-  let Contamination_and_Environmental_Health_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Contamination_and_Environmental_Health_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Contamination and Environmental Health Threats FULL",
-    visible: false,
-  });
-  let Damage_Prone_Critical_Infrastructure_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Damage_Prone_Critical_Infrastructure_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Damage Prone Critical Infrastructure FULL",
-    visible: false,
-  });
-  let Flood_Risk_Mitigation_Zones_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Flood_Risk_Mitigation_Zones_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Flood Risk Mitigation Zones Threats FULL",
-    visible: false,
-  });
-  let Navigable_Waterway_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Navigable_Waterway_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Navigable Waterway Threats FULL",
-    visible: false,
-  });
-  let Environmental_and_Historic_Preservation_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Environmental_and_Historic_Preservation_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Environmental and Historic Preservation Threats FULL",
-    visible: false,
-  });
-  let Eq_Vulnerability_Threats_FULL = new FeatureLayer({
-    url: "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/Eq_Vulnerability_Threats_FULL/FeatureServer/0",
-    outFields: ["*"],
-    title: "Eq Vulnerability Threats FULL",
-    visible: false,
-  });
-
-  //Add Your layers to the map
-  map.addMany([
-    Eq_Vulnerability_Threats_FULL,
-    Environmental_and_Historic_Preservation_Threats_FULL,
-    Navigable_Waterway_Threats_FULL,
-    THREATS_PS_StormSurge,
-    THREATS_FM_dfirm_fldhaz_100_500Yr,
-    Flood_Risk_Mitigation_Zones_Threats_FULL,
-    Damage_Prone_Critical_Infrastructure_FULL,
-    Contamination_and_Environmental_Health_Threats_FULL,
-    Life_Safety_and_Emergency_Response_Zone_Threats_FULL,
-    County_Layer,
-    Work_Layer,
-    ticketData,
-    featureLayer,
-  ]);
-  //--------------------------------------------*feature Layers*-----------------------------------------------
-
   //-----------popup configuration function----------------
-  setupPopup(view);
+  // setupPopup(view);
   //----------popup configuration function------------------
 
-  // ------------------selection--------------------------------
-  let highlight; // to store the current highlight
-  view.whenLayerView(featureLayer).then(function (layerView) {
-    view.on("click", function (event) {
-      // Clear previous highlight
-      if (highlight) {
-        highlight.remove();
-        highlight = null;
-      }
-
-      // Perform hit test to get graphics
-      view.hitTest(event).then(function (response) {
-        const results = response.results.filter(function (result) {
-          return result.graphic.layer === featureLayer;
-        });
-        // console.log("response", response);
-
-        if (results.length > 0) {
-          const graphic = results[0].graphic;
-
-          // Show image
-          imageUrl = graphic.attributes.image_url;
-          const imageElement = document.getElementById("debrisImage");
-
-          if (imageUrl) {
-            imageElement.src = imageUrl;
-            imageElement.style.display = "block";
-          } else {
-            imageElement.style.display = "none";
-          }
-          // Show image
-
-          //show impact field
-          const impactField = graphic.attributes.Impacts;
-          const impactElement = document.getElementById("threatsCell");
-
-          if (impactField) {
-            impactElement.value = impactField;
-          } else {
-            console.log("Impact filed is not set.");
-          }
-          //show impact field
-
-          //show notes
-          const notesField = graphic.attributes.notes;
-          const notesElement = document.getElementById("notesCell");
-
-          if (notesField) {
-            notesElement.value = notesField;
-          } else {
-            console.log("Notes filed is not set.");
-          }
-          //show notes
-
-          // Highlight selected feature
-          highlight = layerView.highlight(graphic);
-          // console.log("highlight", highlight);
-
-          // Optional: Zoom to the selected feature
-          if (graphic.geometry.extent) {
-            view.goTo(graphic.geometry.extent.expand(2));
-          } else {
-            view.goTo(graphic.geometry); // For point geometries
-          }
-        }
-      });
-    });
+  //------------Sketch Interaction-----------------------------------------------
+  const sketch = new Sketch({
+    view: view,
+    layer: graphicsLayer,
+    availableCreateTools: ["polygon", "rectangle"],
+    creationMode: "single",
+    visibleElements: {
+      createTools: { point: false, polyline: false, circle: false },
+      selectionTools: {
+        "lasso-selection": false,
+        "rectangle-selection": false,
+      },
+      settingsMenu: false,
+    },
   });
 
-  //sketch and control buttons
-  view.when(() => {
-    view.ui.remove("zoom");
+  // -----Polygon Button click - Sketch event listener ---------
+  document.getElementById("polygonBtn").addEventListener("click", () => {
+    sketch.create("polygon");
+    view.ui.add(sketch, "top-right");
+  });
+  //------------------***********-----------------------------------------------------
 
-    const searchWidget = new Search({ view });
-    const zoomWidget = new Zoom({ view });
 
-    // Create a single shared container for both widgets
-    const horizontalContainer = document.createElement("div");
-    horizontalContainer.style.display = "flex";
-    horizontalContainer.style.alignItems = "center";
-    horizontalContainer.style.gap = "10px";
-    horizontalContainer.style.padding = "2px";
-    // horizontalContainer.style.marginLeft = "2px";
-    horizontalContainer.style.background = "transparent";
-    // horizontalContainer.style.backgroundColor = "#004b23";
-    horizontalContainer.style.borderRadius = "6px";
+  //-----------Main function for wrapping all functionality---------------------------
+  let selectedFeatures = []; //Storing Selected Features
 
-    // Let ArcGIS render them manually
-    view.ui.add(searchWidget, "manual");
-    view.ui.add(zoomWidget, "manual");
-
-    // Append them in the order you want: Zoom (left), Search (right)
-    horizontalContainer.appendChild(searchWidget.container);
-    horizontalContainer.appendChild(zoomWidget.container);
-
-    // Add combined container to view
-    view.ui.add(horizontalContainer, "top-right");
-
-    //--------------Adding layerlist-----------------
-    const layerList = new LayerList({
-      view: view,
-    });
-
-    const layerListExpand = new Expand({
-      view: view,
-      content: layerList,
-      expandIconClass: "esri-icon-layer-list", // optional: changes icon
-      expandTooltip: "Map Layers",
-    });
-
-    view.ui.add(layerListExpand, "top-right");
-
-    //---------------Adding legends--------------------------
-    const legend = new Legend({
-      view: view,
-    });
-
-    const legendListExpand = new Expand({
-      view: view,
-      content: legend,
-      expandIconClass: "esri-icon-legend", // optional: changes icon
-      expandTooltip: "Legend",
-    });
-
-    view.ui.add(legendListExpand, "top-right");
-
-    //sketch
-
-    const sketch = new Sketch({
-      view: view,
-      layer: graphicsLayer,
-      availableCreateTools: ["polygon", "rectangle"],
-      creationMode: "single",
-      visibleElements: {
-        createTools: { point: false, polyline: false, circle: false },
-        selectionTools: {
-          "lasso-selection": false,
-          "rectangle-selection": false,
-        },
-        settingsMenu: false,
-      },
-    });
-
-    // Button click listener
-    document.getElementById("polygonBtn").addEventListener("click", () => {
-      sketch.create("polygon");
-      view.ui.add(sketch, "top-right");
-    });
-
-    let selectedFeatures = [];
-    function updateUI() {
-      document.getElementById(
-        "featureCount"
-      ).textContent = `Selected Features: ${selectedFeatures.length}`;
-      const hasSelection = selectedFeatures.length > 0;
+  map.when(() => {
+    //-----finding layer from webmap------------
+    const featureLayer = map.layers.find(layer => layer.title === "Debris - AshBritt")
+    if (!featureLayer) {
+      console.error("Feature layer not found!");
+      return;
+    } else {
+      console.log("feature layer found")
     }
 
-    // Refresh button to refresh table
-    document
-      .getElementById("refreshBtn")
-      .addEventListener("click", highlightSelection);
-
-    function highlightSelection() {
-      // graphicsLayer.removeAll();
-      selectedFeatures.forEach((feature) => {
-        graphicsLayer.add(
-          new Graphic({
-            geometry: feature.geometry,
-            symbol: {
-              type: "simple-marker",
-              style: "circle",
-              size: 10,
-              color: [0, 255, 255, 0.0],
-              outline: { color: [0, 255, 255, 1.0], width: 2 },
-            },
-          })
-        );
-      });
-
-      //---------------Table----------------------------
-
-      const container = document.getElementById("tableContainer");
-      container.innerHTML = ""; // Clear before adding new tables
-
-      // Adding new functon to create feature table
-      const groupedData = {};
-
-      selectedFeatures.forEach((feature) => {
-        const attr = feature.attributes;
-        const county = attr.COUNTY || "Unknown County";
-        const area = attr.Work_Area_Name || "Unknown Area";
-
-        // Initialize county group
-        if (!groupedData[county]) {
-          groupedData[county] = {};
-        }
-
-        // Initialize area group within county
-        if (!groupedData[county][area]) {
-          groupedData[county][area] = [];
-        }
-
-        // Push feature data into the group
-        groupedData[county][area].push({
-          threat: attr.Impacts || "N/A",
-          image_url: attr.image_url || null,
-          image_name: attr.image_name || null,
-          notes: attr.notes || null,
-          location: attr.location || null,
-        });
-      });
-
-      // Build the HTML directly
-      for (const [county, areas] of Object.entries(groupedData)) {
-        const countyTable = document.createElement("table");
-        countyTable.className = "featureTable";
-        countyTable.id = "featureTable"; // Match the original ID
-
-        // Create county row
-        const countyRow = document.createElement("tr");
-        countyRow.innerHTML = `
-    <td class="label">County:</td>
-    <td class="value" id="countyCell">${county}</td>
-  `;
-        countyTable.appendChild(countyRow);
-
-        for (const [area, features] of Object.entries(areas)) {
-          // Create area row
-          const areaRow = document.createElement("tr");
-          areaRow.innerHTML = `
-      <td class="label">Area:</td>
-      <td class="value" id="areaCell">${area}</td>
-    `;
-          countyTable.appendChild(areaRow);
-
-          //-------------------threats row-----------------------
-          // Step 1: Define known threat types
-          const knownThreats = [
-            "Immediate threat to life, public health, or safety",
-            "Immediate threat to improved public or private property",
-            "Obstruction to vessel passage in an eligible navigable waterway",
-            "Submerged or floating debris threatening navigation or embankment stability",
-            "Obstruction to intake structures",
-            "Risk of structural damage to bridges, culverts, or other infrastructure",
-            "Increased flooding risk to improved property during a 5-year flood even",
-            "To Be Removed",
-            // Add more known types if needed
-          ];
-
-          // Step 2: Extract all threats that match known types
-          const matchedThreats = new Set();
-
-          features.forEach((item) => {
-            if (!item.threat || item.threat === "N/A") return;
-
-            knownThreats.forEach((threatType) => {
-              if (item.threat.includes(threatType)) {
-                matchedThreats.add(threatType);
-              }
-            });
-          });
-
-          // Step 3: Convert to list items
-          const threatList = [...matchedThreats]
-            .map((threat) => `<li>${threat}</li>`)
-            .join("");
-
-          // Step 4: Inject into the table
-          const threatsRow = document.createElement("tr");
-          threatsRow.innerHTML = `
-          <td class="label">Threats:</td>
-          <td class="value" id="threatsCell">
-            <ul style="margin: 0; padding-left: 20px;">${threatList}</ul>
-          </td>
-        `;
-          countyTable.appendChild(threatsRow);
-
-          //-------------------threats row-----------------------
-
-          // Create Notes row
-          const notesSet = new Set(features.map((item) => item.notes));
-          const notes = [...notesSet].join(", ");
-
-          const notesRow = document.createElement("tr");
-          notesRow.innerHTML = `
-      <td class="label">Notes:</td>
-      <td class="value" id="notesCell">${notes}</td>
-    `;
-          countyTable.appendChild(notesRow);
-
-          // Adding lat long to feature table
-          // const location = features.map((item) => item.location);
-
-          // Create images row
-          const imagesRow = document.createElement("tr");
-          const imagesContent = features
-            .map((item) => {
-              if (item.image_url) {
-                const cleanLocation = item.location.replace(/[()]/g, "");
-                const [lat, lon] = cleanLocation
-                  .split(",")
-                  .map((coord) => Number(parseFloat(coord).toFixed(6)));
-                return `
-                  <div class="image-with-location">
-                    <div class="location-info" style="text-align: center;">${lat},${" "}${lon}</div>
-                    <img class="img-fluid mx-auto d-block avoid-break" src="${item.image_url
-                  }" alt="Feature Image" />
-                  </div>
-                `;
-              }
-              return "No image";
-            })
-            .join("<br>"); // Separate multiple images with line breaks
-
-          imagesRow.innerHTML = `
-      <td class="value images-cell" colspan="2">
-      <strong>Images:</strong><br />
-      ${imagesContent}
-      </td>
-    `;
-          countyTable.appendChild(imagesRow);
-        }
-        container.appendChild(countyTable);
-      }
-    }
-
-    // sketch.on("create", async (event) => {
-    //   if (event.state === "complete") {
-    //     // console.log("Polygon geometry:", event.graphic.geometry); // Add this
-
-    //     const query = featureLayer.createQuery();
-    //     query.geometry = event.graphic.geometry;
-    //     query.spatialRelationship = "intersects";
-    //     query.returnGeometry = true;
-    //     query.outFields = ["*"];
-
-    //     const result = await featureLayer.queryFeatures(query);
-
-    //     selectedFeatures = result.features;
-    //     graphicsLayer.removeAll();
-
-    //     highlightSelection();
-    //     updateUI();
-
-    //     document
-    //       .getElementById("updateBtn")
-    //       .addEventListener("click", async () => {
-    //         const checkboxes = document.querySelectorAll(
-    //           "#impactFields input[type='checkbox']:checked"
-    //         );
-
-    //         const notes = document.getElementById("notesText").value;
-
-    //         if (checkboxes.length > 0) {
-    //           const selectedValues = Array.from(checkboxes).map(
-    //             (cb) => cb.value
-    //           );
-
-    //           for (let feature of selectedFeatures) {
-    //             feature.attributes.Impact = selectedValues.join(", ");
-    //           }
-    //         }
-
-    //         if (notes) {
-    //           for (let feature of selectedFeatures) {
-    //             feature.attributes.notes = notes;
-    //           }
-    //         }
-    //         const edits = await featureLayer.applyEdits({
-    //           updateFeatures: selectedFeatures,
-    //         });
-
-    //         if (edits.updateFeatureResults.length > 0) {
-    //           alert("Updated successfully!");
-    //         } else {
-    //           alert("No updates were made.");
-    //         }
-    //       });
-    //   }
-    // });
+    //-----To zoom on the feature layer when feature layer is ready
+    view.whenLayerView(featureLayer).then((layerView) => {
+      featureLayer.queryExtent().then((response) => view.goTo(response.extent));
+    });
 
     sketch.on("create", async (event) => {
       if (event.state === "complete") {
@@ -677,8 +182,25 @@ require([
         selectedFeatures = result.features;
         graphicsLayer.removeAll();
 
-        highlightSelection();
-        updateUI();
+        // Applying symbology to selected features
+        selectedFeatures.forEach((feature) => {
+          graphicsLayer.add(
+            new Graphic({
+              geometry: feature.geometry,
+              symbol: {
+                type: "simple-marker",
+                style: "circle",
+                size: 10,
+                color: [0, 255, 255, 0.0],
+                outline: { color: [0, 255, 255, 1.0], width: 2 },
+              },
+            })
+          );
+        });
+        //-----------------************-------------------
+
+        updateTable(selectedFeatures); //update values in the table
+        updateUI(selectedFeatures); //update selected features
       }
     });
 
@@ -716,12 +238,12 @@ require([
       }
     });
 
-    //clear button
+    //------clear button-----------
     document.getElementById("clearBtn").addEventListener("click", () => {
       graphicsLayer.removeAll();
       selectedFeatures = [];
-      highlight = null;
-      updateUI();
+
+      updateUI(selectedFeatures);
       const checkboxes = document.querySelectorAll(
         '#impactFields input[type="checkbox"]'
       );
@@ -734,49 +256,31 @@ require([
         mapCheckbox.checked = false;
         localStorage.removeItem("mapScreenshot");
       }
-
-      highlight.remove();
     });
-  });
 
-  view.whenLayerView(featureLayer).then((layerView) => {
-    featureLayer.queryExtent().then((response) => view.goTo(response.extent));
-  });
+    // ------Refresh button to refresh table------
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      updateTable(selectedFeatures);
+    });
 
-  //---------------Print map in report ----------------------
-  document.getElementById("takeScreenshot").addEventListener("change", function () {
-    if (this.checked) {
-      // Hide labels before screenshot
-      Work_Layer.labelsVisible = false;
-  
-      // Allow time for label change to reflect visually before taking screenshot
-      setTimeout(() => {
+    //---------------Print map in report ----------------------
+    document.getElementById("takeScreenshot").addEventListener("change", function () {
+      if (this.checked) {
+        // Hide labels before screenshot
         view.takeScreenshot().then((screenshot) => {
           localStorage.setItem("mapScreenshot", screenshot.dataUrl);
-  
-          // Optional: Restore labels after screenshot
-          Work_Layer.labelsVisible = true;
         });
-      }, 500); // 500ms delay to allow label visibility to update
-    }else{
-      localStorage.removeItem("mapScreenshot");
-    }
-  });
-});
 
-//-------------------------------printing pdf----------------------------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-  const button = document
-    .getElementById("downloadPDFBtn")
-    .addEventListener("click", () => {
-      generatePDF();
-      const mapCheckbox = document.getElementById("takeScreenshot");
-      if (!mapCheckbox.checked) {
-        // mapCheckbox.checked == false;
+      } else {
         localStorage.removeItem("mapScreenshot");
       }
     });
+  })
+
 });
+
+
+// ---------toggle button for sideview and map-------------------
 
 const toggleBtn = document.getElementById("toggleSidebar");
 const toggleBtnMap = document.getElementById("toggleSidebarMap");
@@ -815,6 +319,7 @@ function toggleSidebar() {
   }, 300);
 }
 
+// ---------Showing Statistics of Impact field---------------------
 const baseUrl =
   "https://services6.arcgis.com/BbkhAXl184tJwj9J/arcgis/rest/services/SGC_Image_Points_V2/FeatureServer/0/query";
 
@@ -822,7 +327,7 @@ const baseUrl =
 const fieldName = "Impacts";
 
 async function getCount(whereClause) {
-  const url = `${baseUrl}/query?where=${encodeURIComponent(
+  const url = `${baseUrl}/?where=${encodeURIComponent(
     whereClause
   )}&returnCountOnly=true&f=json`;
   const response = await fetch(url);
@@ -843,7 +348,30 @@ async function countByField(field) {
 
 // Call the function
 countByField(fieldName);
+//------------------------------------****************------------------------
 
 // Register both toggle buttons
 toggleBtn.addEventListener("click", toggleSidebar);
 toggleBtnMap.addEventListener("click", toggleSidebar);
+
+//----------------Buttons-------------------------------------------------------------------
+//-------------------------------Download pdf Button----------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const button = document
+    .getElementById("downloadPDFBtn")
+    .addEventListener("click", () => {
+      const mapCheckbox = document.getElementById("takeScreenshot");
+      if (!mapCheckbox.checked) {
+        // mapCheckbox.checked == false;
+        localStorage.removeItem("mapScreenshot");
+      }
+      generatePDF();
+    });
+});
+
+// Showing a Count of Selected features 
+function updateUI(selectedFeatures) {
+  document.getElementById(
+    "featureCount"
+  ).textContent = `Selected Features: ${selectedFeatures.length}`;
+}
