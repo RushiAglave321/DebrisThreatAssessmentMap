@@ -146,13 +146,11 @@ async function generatePDFNow(element) {
         gap: 20px;
         margin: 20px 0;
         width: 100%;
-        
-       
       }
       .image-with-location {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        height: 440px;
         page-break-inside: avoid;
         break-inside: avoid;
       }
@@ -335,6 +333,30 @@ async function generatePDFNow(element) {
         // Apply style only if county has NOT been seen
         if (!countySeenBeforeArea) {
           row.style.pageBreakBefore = "always";
+
+          const labelText = labelCell.textContent;
+          const valueCell = labelCell.nextElementSibling;
+          const valueText = valueCell?.textContent || "";
+
+          // 2. Create a new merged cell
+          const mergedCell = document.createElement("td");
+          mergedCell.colSpan = 2; // Span both columns
+          mergedCell.innerHTML = `
+            <div style="padding-top: 20px;"> <!-- Spacer -->
+              <strong>${labelText}</strong> ${valueText} <!-- Combined content -->
+            </div>
+          `;
+
+          // 3. Replace both cells with the merged cell
+          row.innerHTML = ""; // Clear existing cells
+          row.appendChild(mergedCell);
+
+          // 4. Remove borders if needed
+          row.style.border = "none";
+          mergedCell.style.border = "none";
+          mergedCell.style.color = " #0066cc";
+          mergedCell.style.padding = "8px";
+
         } else {
           row.style.pageBreakBefore = "avoid"; // or omit this line if not needed
           countySeenBeforeArea = false;
@@ -344,9 +366,7 @@ async function generatePDFNow(element) {
         const valueCell = labelCell.nextElementSibling;
         if (valueCell) {
           valueCell.style.fontWeight = "bold"; // Option 1: apply bold style
-
-          // OR Option 2: wrap text in <strong>
-          // valueCell.innerHTML = `<strong>${valueCell.textContent.trim()}</strong>`;
+          
         }
 
       }
@@ -440,6 +460,6 @@ async function generatePDFNow(element) {
 
   setTimeout(() => {
     printWindow.print();
-    setTimeout(() => printWindow.close(), 3000);
+    setTimeout(() => printWindow.close(), 2000);
   }, 1000);
 }
